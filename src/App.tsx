@@ -59,7 +59,7 @@ export default function App() {
 
   const [heroImage, setHeroImage] = useState<string>(() => {
     const local = localStorage.getItem("huongvu_hero_image");
-    return local || "/src/assets/images/hero_vietnam_mountains_new_1781779741604.jpg";
+    return local || "/src/assets/images/ethnic_woman_banner.jpg";
   });
 
   const [isAdminOpen, setIsAdminOpen] = useState(false);

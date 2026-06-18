@@ -14,11 +14,11 @@ export default function Hero({ onExploreClick, heroImage }: HeroProps) {
         <img
           src={heroImage}
           alt="Majestic Tây Bắc Mountains"
-          className="w-full h-full object-cover object-center opacity-70 transform scale-102"
+          className="w-full h-full object-cover object-center opacity-85 transform scale-102"
           referrerPolicy="no-referrer"
         />
         {/* Multi-layered Vignettes for Visual Contrast and Readability of Text */}
-        <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/40 to-[#0d1f15]/80 xl:to-black/30 md:bg-gradient-to-t md:from-[#0d1f15]/90 md:via-transparent md:to-black/30" />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-transparent to-black/40" />
       </div>
 
       {/* Decorative Floating Forest Leaves */}
