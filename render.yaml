@@ -2,7 +2,7 @@ services:
   - type: web
     name: thao-duoc-huong-vu
     env: node
-    plan: starter
+    plan: free
     buildCommand: corepack enable && pnpm install --frozen-lockfile && pnpm run build
     startCommand: pnpm run start
     envVars:
