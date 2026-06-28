@@ -473,6 +473,19 @@ async function startServer() {
     res.send(parsed.buffer);
   });
 
+  app.get("/api/static-image/:filename", (req, res) => {
+    const filename = path.basename(req.params.filename);
+    const imagePath = path.join(process.cwd(), "src", "assets", "images", filename);
+
+    if (!fs.existsSync(imagePath)) {
+      res.status(404).send("Static image not found");
+      return;
+    }
+
+    res.setHeader("Cache-Control", "public, max-age=86400");
+    res.sendFile(imagePath);
+  });
+
   app.post("/api/admin/login", (req, res) => {
     const { phone, pin } = req.body || {};
     const adminPhone = process.env.ADMIN_PHONE || (process.env.NODE_ENV === "production" ? "" : "0569315315");
