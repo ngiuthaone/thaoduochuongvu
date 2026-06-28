@@ -127,9 +127,43 @@ function asHeroImageResponse(value: string) {
   return JSON.stringify(images.map((_, index) => `/api/hero-image/${index}`));
 }
 
+function asCatalogImageResponse(value: string, path: string) {
+  return typeof value === "string" && value.startsWith("data:") ? path : value;
+}
+
+function getProductImagesArray(product: any): string[] {
+  if (Array.isArray(product.images) && product.images.length > 0) {
+    return product.images.filter((item: unknown): item is string => typeof item === "string");
+  }
+
+  return typeof product.image === "string" && product.image ? [product.image] : [];
+}
+
 function getPublicDB(state: DBState): DBState {
+  const products = state.products.map((product) => {
+    const id = encodeURIComponent(String(product.id || ""));
+    const images = getProductImagesArray(product);
+    return {
+      ...product,
+      image: asCatalogImageResponse(String(product.image || ""), `/api/product-image/${id}/0`),
+      images: images.map((image, index) =>
+        asCatalogImageResponse(image, `/api/product-image/${id}/${index}`)
+      ),
+    };
+  });
+
+  const categories = state.categories.map((category) => {
+    const id = encodeURIComponent(String(category.id || ""));
+    return {
+      ...category,
+      image: asCatalogImageResponse(String(category.image || ""), `/api/category-image/${id}`),
+    };
+  });
+
   return {
     ...state,
+    products,
+    categories,
     heroImage: asHeroImageResponse(state.heroImage),
     orders: [],
     consultations: [],
@@ -377,6 +411,60 @@ async function startServer() {
     const parsed = parseDataUrlImage(image);
     if (!parsed) {
       res.status(400).send("Invalid hero image");
+      return;
+    }
+
+    res.setHeader("Content-Type", parsed.mimeType);
+    res.setHeader("Cache-Control", "public, max-age=3600");
+    res.send(parsed.buffer);
+  });
+
+  app.get("/api/product-image/:id/:index", async (req, res) => {
+    const index = Number(req.params.index || 0);
+    const db = await loadDB();
+    const product = db.products.find((item) => String(item.id) === req.params.id);
+    const images = product ? getProductImagesArray(product) : [];
+    const image = images[index] || product?.image;
+
+    if (!image) {
+      res.status(404).send("Product image not found");
+      return;
+    }
+
+    if (!image.startsWith("data:")) {
+      res.redirect(image);
+      return;
+    }
+
+    const parsed = parseDataUrlImage(image);
+    if (!parsed) {
+      res.status(400).send("Invalid product image");
+      return;
+    }
+
+    res.setHeader("Content-Type", parsed.mimeType);
+    res.setHeader("Cache-Control", "public, max-age=3600");
+    res.send(parsed.buffer);
+  });
+
+  app.get("/api/category-image/:id", async (req, res) => {
+    const db = await loadDB();
+    const category = db.categories.find((item) => String(item.id) === req.params.id);
+    const image = category?.image;
+
+    if (!image) {
+      res.status(404).send("Category image not found");
+      return;
+    }
+
+    if (!image.startsWith("data:")) {
+      res.redirect(image);
+      return;
+    }
+
+    const parsed = parseDataUrlImage(image);
+    if (!parsed) {
+      res.status(400).send("Invalid category image");
       return;
     }
 
