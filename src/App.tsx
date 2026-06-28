@@ -19,7 +19,6 @@ import AdminPanel from "./components/AdminPanel";
 import { Product, CartItem, OrderDetails, Category, AboutUsData, ContactData, ConsultationRequest } from "./types";
 import { products as initialProducts, categories as initialCategories } from "./data";
 import { Sparkles, Eye, ShieldCheck, Heart, User, Clock, ArrowRight, X, ShoppingCart } from "lucide-react";
-import defaultHeroImage from "./assets/images/hero_vietnam_mountains_new_1781779741604.jpg";
 
 interface SiteDataState {
   products?: Product[];
@@ -36,6 +35,23 @@ const safeSetItem = (key: string, value: string) => {
     localStorage.setItem(key, value);
   } catch (error) {
     console.warn(`Local storage quota exceeded for key "${key}". Storage will persist on the server:`, error);
+  }
+};
+
+const safeGetItem = (key: string): string | null => {
+  try {
+    return sessionStorage.getItem(key) || localStorage.getItem(key);
+  } catch (error) {
+    console.warn(`Unable to read cached value for key "${key}":`, error);
+    return null;
+  }
+};
+
+const safeCacheHeroImage = (value: string) => {
+  try {
+    sessionStorage.setItem("huongvu_hero_image", value);
+  } catch (error) {
+    console.warn("Unable to cache hero image:", error);
   }
 };
 
@@ -161,7 +177,7 @@ export default function App() {
 
   const [consultations, setConsultations] = useState<ConsultationRequest[]>([]);
 
-  const [heroImage, setHeroImage] = useState<string>(defaultHeroImage);
+  const [heroImage, setHeroImage] = useState<string>(() => safeGetItem("huongvu_hero_image") || "");
 
   const [isAdminOpen, setIsAdminOpen] = useState(false);
 
@@ -173,7 +189,10 @@ export default function App() {
     if (data.products) updateIfChanged(setProductsList, data.products);
     if (data.categories) updateIfChanged(setCategoriesList, data.categories);
     if (data.aboutUs) updateIfChanged(setAboutUsData, data.aboutUs);
-    if (data.heroImage) updateIfChanged(setHeroImage, data.heroImage);
+    if (data.heroImage) {
+      safeCacheHeroImage(data.heroImage);
+      updateIfChanged(setHeroImage, data.heroImage);
+    }
     if (data.orders) updateIfChanged(setOrders, data.orders);
     if (data.contact) updateIfChanged(setContactData, { ...defaultContact, ...data.contact });
     if (data.consultations) updateIfChanged(setConsultations, data.consultations);

@@ -20,12 +20,12 @@ export default function Hero({ onExploreClick, heroImage, contactData }: HeroPro
   const images = (() => {
     try {
       if (heroImage && heroImage.startsWith("[")) {
-        return JSON.parse(heroImage) as string[];
+        return (JSON.parse(heroImage) as string[]).filter(Boolean);
       }
     } catch (e) {
       console.warn("Failed to parse hero images list:", e);
     }
-    return [heroImage || "https://images.unsplash.com/photo-1504198453319-5ce911bafcde?auto=format&fit=crop&q=80&w=1600"];
+    return heroImage ? [heroImage] : [];
   })();
 
   const [currentIndex, setCurrentIndex] = useState(0);
