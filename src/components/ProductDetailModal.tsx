@@ -20,7 +20,7 @@ export default function ProductDetailModal({
   const [activeImgIndex, setActiveImgIndex] = useState(0);
 
   const formatVND = (num: number) => {
-    return num.toLocaleString("vi-VN") + "đ";
+    return num > 0 ? num.toLocaleString("vi-VN") + "đ" : "Liên hệ";
   };
 
   const handleIncrement = () => setQuantity((prev) => prev + 1);

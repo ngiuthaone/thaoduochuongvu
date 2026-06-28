@@ -112,7 +112,7 @@ export default function Products({
 
   // Currency Formatter
   const formatVND = (num: number) => {
-    return num.toLocaleString("vi-VN") + "đ";
+    return num > 0 ? num.toLocaleString("vi-VN") + "đ" : "Liên hệ";
   };
 
   return (

@@ -33,7 +33,7 @@ function getProductBadge(product: Product) {
   return null;
 }
 
-const formatVND = (num: number) => num.toLocaleString("vi-VN") + "đ";
+const formatVND = (num: number) => (num > 0 ? num.toLocaleString("vi-VN") + "đ" : "Liên hệ");
 type SortMode = "recommended" | "price-asc" | "price-desc" | "reviews";
 
 export default function ProductsPage({
