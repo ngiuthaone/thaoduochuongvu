@@ -1,0 +1,191 @@
+{
+  "products": [
+    {
+      "id": "tra-atiso",
+      "name": "Trà Atiso Túi Lọc",
+      "category": "tra-thao-duoc",
+      "price": 120000,
+      "rating": 5,
+      "reviewsCount": 12,
+      "image": "/src/assets/images/product_atiso_tea_1781778642518.jpg",
+      "description": "Trà Atiso túi lọc cao cấp được chế biến từ những đóa hoa atiso tươi ngon nhất của vùng núi cao, đem đến vị ngọt thanh khiết, hỗ trợ mát gan, thải độc và mang lại giấc ngủ an giấc.",
+      "benefits": [
+        "Thanh nhiệt, giải độc gan hiệu quả",
+        "Giúp hạ cholesterol trong máu",
+        "Cải thiện hệ tiêu hóa tự nhiên",
+        "Giúp ngủ ngon và sâu giấc hơn"
+      ],
+      "usage": "Nhúng túi trà vào 150ml - 200ml nước sôi ở 95°C. Đợi 3-5 phút cho dưỡng chất tan đều ra nước rồi tận hưởng. Có thể dùng hàng ngày thay nước lọc.",
+      "isNew": true
+    },
+    {
+      "id": "sam-ngoc-linh",
+      "name": "Sâm Ngọc Linh",
+      "category": "re-thao-duoc",
+      "price": 1500000,
+      "originalPrice": 1800000,
+      "rating": 5,
+      "reviewsCount": 8,
+      "image": "/src/assets/images/product_sam_ngoc_linh_1781778655932.jpg",
+      "description": "Sâm Ngọc Linh - Quốc bảo Việt Nam, được đánh giá là một trong những loài sâm tốt nhất thế giới với hàm lượng saponin vượt trội. Sâm giúp điều hòa tim mạch, bồi bổ sinh lực tuyệt đối.",
+      "benefits": [
+        "Tăng cường đề kháng, bổ sung nguồn năng lượng dồi dào",
+        "Chống stress, cải thiện trí nhớ và tăng khả năng tập trung",
+        "Hỗ trợ bảo vệ gan, tăng sinh hồng cầu tốt cho tim mạch",
+        "Chống lão hóa mạnh mẽ, níu giữ nét xuân"
+      ],
+      "usage": "Thái lát ngậm trực tiếp, ngâm mật ong rừng nguyên chất, hãm trà nóng hoặc ngâm rượu nếp cái hoa vàng cao cấp trong 3 tháng trở lên.",
+      "isNew": true,
+      "isBestSeller": true
+    },
+    {
+      "id": "saffron-tay-tuan",
+      "name": "Nhụy Hoa Nghệ Tây Tây Tạng",
+      "category": "tra-thao-duoc",
+      "price": 350000,
+      "originalPrice": 420000,
+      "rating": 5,
+      "reviewsCount": 15,
+      "image": "/src/assets/images/product_saffron_1781778622356.jpg",
+      "description": "Nhụy hoa nghệ tây (Saffron) organic cao cấp thu hoạch thủ công tại các đỉnh núi cao Tây Tạng. Thảo dược quý giá giúp làn da tươi sáng rạng ngời, cải thiện tâm trạng và đồng hồ sinh học cơ thể.",
+      "benefits": [
+        "Đánh bay mất ngủ kinh niên, giúp giấc ngủ êm dịu",
+        "Dưỡng trắng da, mờ thâm nám từ sâu bên trong",
+        "Điều hòa huyết áp và cải thiện thị lực",
+        "Hỗ trợ giảm cân lành mạnh nhờ giảm thèm ăn"
+      ],
+      "usage": "Thả 3-5 sợi Saffron vào 300ml nước ấm (khoảng 70-80°C). Chờ 5 phút cho nước chuyển màu vàng óng là có thể thưởng thức. Có thể uống thêm mật ong.",
+      "isNew": true
+    },
+    {
+      "id": "binh-ngam-sam",
+      "name": "Bình Ngâm Sâm Thượng Hạng",
+      "category": "thao-duoc-ngam-ruou",
+      "price": 2500000,
+      "rating": 5,
+      "reviewsCount": 7,
+      "image": "/src/assets/images/category_liquor_1781778591770.jpg",
+      "description": "Bình rượu ngâm sâm ngọc linh và sâm đá tự nhiên trong cồn nếp sạch cao độ thượng hạng. Thiết kế bình thủy tinh sang trọng, là món quà quý giá thể hiện đẳng cấp cho gia chủ.",
+      "benefits": [
+        "Tăng cường sinh lực, bổ thận tráng dương",
+        "Giúp khí huyết lưu thông, mạnh gân cốt",
+        "Phục hồi thể trạng nhanh chóng sau mệt mỏi",
+        "Thích hợp làm quà biếu tặng sang trọng lịch thiệp"
+      ],
+      "usage": "Mỗi ngày dùng 1-2 ly nhỏ (khoảng 20-30ml) trong hoặc sau bữa ăn tối. Nên duy trì đều đặn để có kết quả phục hồi sinh lực tốt nhất.",
+      "isNew": true
+    },
+    {
+      "id": "thao-duoc-ngam",
+      "name": "Combo Thảo Dược Ngâm Rượu",
+      "category": "thao-duoc-ngam-ruou",
+      "price": 450000,
+      "originalPrice": 550000,
+      "rating": 5,
+      "reviewsCount": 10,
+      "image": "/src/assets/images/category_roots_1781778577888.jpg",
+      "description": "Tổng hợp các loại thảo dược ngâm rượu bổ dưỡng nhất Tây Bắc bao gồm: sâm đá, dâm dương hoắc, ba kích tím, nhục thung dung. Giúp bổ thận tráng dương mạnh gân cốt.",
+      "benefits": [
+        "Bồi bổ sức khỏe toàn diện, tráng dương dồi dào",
+        "Hỗ trợ giảm đau mỏi xương khớp khi thay đổi thời tiết",
+        "Tăng tuần hoàn máu giúp da dẻ hồng hào ấm áp",
+        "Làm sạch đường ruột, kích thích bữa ăn thêm ngon"
+      ],
+      "usage": "Rửa sạch qua rượu nhẹ, cho tất cả nguyên liệu vào bình thủy tinh 5-10 lít. Đổ đầy rượu nếp ngon từ 40 độ trở lên, đậy kín nắp ngâm trong 1-2 tháng.",
+      "isNew": true
+    },
+    {
+      "id": "nam-linh-chi",
+      "name": "Nấm Linh Chi Tây Bắc",
+      "category": "nam-duoc-lieu",
+      "price": 280000,
+      "rating": 5,
+      "reviewsCount": 9,
+      "image": "/src/assets/images/category_mushrooms_1781778605959.jpg",
+      "description": "Nấm Linh Chi tự nhiên khai thác tại rừng già Tây Bắc. Sản phẩm bảo đảm sấy thô nguyên tai, giữ nguyên vẹn lớp bào tử màu nâu bổ dưỡng bên trên bề mặt nấm.",
+      "benefits": [
+        "Kích thích hệ thống miễn dịch hoạt động trơn tru",
+        "Hạ huyết áp và ổn định đường huyết lý tưởng",
+        "Giải trừ độc tố, chống oxy hóa gốc tự do",
+        "Chống lão hóa vượt trội cho cả nam và nữ"
+      ],
+      "usage": "Thái lát hoặc đập nhỏ, đun sôi kỹ với nước sạch trong 15-20 phút rồi uống lúc ấm. Có thể lọc bã rồi cho chất nước bảo quản tủ lạnh uống trong ngày.",
+      "isNew": true
+    }
+  ],
+  "categories": [
+    {
+      "id": "tra-thao-duoc",
+      "name": "TRÀ THẢO DƯỢC",
+      "tagline": "Thanh lọc cơ thể, tăng cường sức khỏe",
+      "image": "/src/assets/images/category_tea_1781778559006.jpg"
+    },
+    {
+      "id": "re-thao-duoc",
+      "name": "RỄ THẢO DƯỢC",
+      "tagline": "Bồi bổ cơ thể, hỗ trợ điều trị",
+      "image": "/src/assets/images/category_roots_1781778577888.jpg"
+    },
+    {
+      "id": "thao-duoc-ngam-ruou",
+      "name": "THẢO DƯỢC NGÂM RƯỢU",
+      "tagline": "Tăng cường sinh lực, bồi bổ sức khỏe",
+      "image": "/src/assets/images/category_liquor_1781778591770.jpg"
+    },
+    {
+      "id": "nam-duoc-lieu",
+      "name": "NẤM DƯỢC LIỆU",
+      "tagline": "Tăng cường miễn dịch, phòng chống bệnh tật",
+      "image": "/src/assets/images/category_mushrooms_1781778605959.jpg"
+    }
+  ],
+  "aboutUs": {
+    "subtitle": "Hành Trình Gìn Giữ Di Sản",
+    "title": "VỀ CHÚNG TÔI - THẢO DƯỢC HƯƠNG VŨ",
+    "description": "Sứ mệnh mang từng giọt tinh túy, thảo mộc quý của núi cao hoang dã Tây Bắc tiếp cận hàng triệu gia đình Việt mong muốn tăng tuổi thọ và bồi bổ sức khỏe tự nhiên.",
+    "quote": "“Chất lượng từ chữ TÂM, uy tín gầy dựng qua năm tháng”",
+    "paragraph1": "Khởi đầu từ những chuyến đi rừng dài ngày của dòng họ Vũ tìm kiếm các phương thuốc trân quý của người Dao đỏ, người H'mông bản địa vùng núi Sapa, Hà Giang. Thảo Dược Hương Vũ đã nâng tầm chế biến thủ công giữ trọn vẹn lớp dược lý cao nhất mà không lạm dụng bất kỳ hóa chất diệt cỏ hay sấy lưu huỳnh công nghiệp độc hại nào.",
+    "paragraph2": "Sản phẩm của Hương Vũ đạt kiểm định an toàn vệ sinh thực phẩm khắt khe và được các chuyên khoa Đông y viện Trung Ương tin dùng kê đơn nâng cao thể trạng.",
+    "statNumber": "15+ Năm",
+    "statLabel": "Châm cứu & thảo dược thuần tự nhiên rừng sâu"
+  },
+  "heroImage": "/src/assets/images/hero_vietnam_mountains_new_1781779741604.jpg",
+  "orders": [],
+  "contact": {
+    "companyName": "THẢO DƯỢC HƯƠNG VŨ",
+    "tagline": "Tổng Kho Thảo Dược Đông Y Tây Bắc",
+    "address": "Bản Cát Cát, Thị xã Sa Pa, Tỉnh Lào Cai, Việt Nam.",
+    "phone": "(+84)569315315",
+    "email": "thaoduochuongvu.taybac@gmail.com",
+    "workingHours": "7h30 sáng - 22h00 đêm hàng ngày (kể cả Thứ 7 và Chủ nhật).",
+    "footerDesc": "Nguồn dược liệu hoang dã sấy hữu cơ mang nguyên vẹn dược tính thượng hạng bồi bổ thể trạng cho gia đình bạn.",
+    "footerRatingText": "(4.9/5 điểm uy tín từ 1.200+ khách hàng)",
+    "footerCopyright": "© 2026 Thảo Dược Hương Vũ. Bản quyền thiết kế ván hàng thuộc Sapa Organic Farm.",
+    "commitment1Title": "CAM KẾT CHÍNH HÃNG",
+    "commitment1Desc": "Đền bù ngay gấp 10 lần giá trị hóa đơn nếu phát hiện hàng giả, sâm giả hay không rõ nguồn gốc.",
+    "commitment2Title": "GIAO HÀNG ĐỒNG KIỂM",
+    "commitment2Desc": "Nhận hàng toàn quốc nhanh chóng, được bóc hộp kiểm tra và ngửi chất lượng dược phẩm trước khi thanh toán.",
+    "commitment3Title": "ĐỔI TRẢ MIỄN PHÍ",
+    "commitment3Desc": "Đổi trả sản phẩm trong vòng 7 ngày nếu bị bung gói chân không hoặc sấy ẩm mốc do lỗi vận chuyển.",
+    "zaloLink": "https://zalo.me/84569315315",
+    "facebookLink": "https://www.facebook.com/thaoduochuongvu",
+    "tiktokLink": "https://www.tiktok.com/@huonggoluanongsantaybac",
+    "bannerBadge": "100% Nguyên Liệu Thiên Nhiên Rừng Già",
+    "bannerSubtitle": "Thảo Dược Đông Y Tây Bắc",
+    "bannerTitle": "HƯƠNG VŨ",
+    "bannerTagline": "TINH TÚY NÚI RỰNG TÂY BẮC",
+    "bannerDesc": "Chuyên cung cấp sỉ lẻ thảo dược chất lượng cao - Đồ uống ngâm bổ Đông Y Tây Bắc thượng hạng. Được thu hái thủ công 100% tự nhiên bảo đảm vệ sinh - Uy tín đặt lên hàng đầu.",
+    "headerHome": "TRANG CHỦ",
+    "headerProducts": "SẢN PHẨM",
+    "headerAbout": "VỀ CHÚNG TÔI",
+    "headerContact": "LIÊN HỆ",
+    "headerSearch": "Tìm kiếm sản phẩm...",
+    "sectionProductsTitle": "SẢN PHẨM MỚI THU HOẠCH",
+    "sectionCategoriesTitle": "DANH MỤC NỔI BẬT",
+    "showCategoriesSection": true,
+    "showProductsSection": true,
+    "showAboutSection": true,
+    "showContactSection": true
+  },
+  "consultations": []
+}

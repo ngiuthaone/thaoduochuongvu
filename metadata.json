@@ -1,0 +1,6 @@
+{
+  "name": "Thảo Dược Hương Vũ",
+  "description": "Landing page bán hàng và giới thiệu thảo dược Tây Bắc cao cấp như sâm Ngọc Linh, saffron, nấm linh chi, trà thảo mộc.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

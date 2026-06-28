@@ -1,0 +1,79 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-serif: "Playfair Display", Georgia, serif;
+  --font-sans: "Plus Jakarta Sans", system-ui, sans-serif;
+}
+
+html, body {
+  overflow-x: hidden;
+  max-width: 100%;
+  width: 100%;
+}
+
+@keyframes panBackground {
+  0% {
+    transform: scale(1.18) translate3d(-4%, 0%, 0);
+  }
+  50% {
+    transform: scale(1.2) translate3d(1%, -0.35%, 0);
+  }
+  100% {
+    transform: scale(1.18) translate3d(4%, 0%, 0);
+  }
+}
+
+@keyframes panBackgroundLoop {
+  0% {
+    transform: scale(1.2) translate3d(-4%, 0%, 0);
+  }
+  45% {
+    transform: scale(1.22) translate3d(4%, -0.35%, 0);
+  }
+  55% {
+    transform: scale(1.22) translate3d(4%, -0.35%, 0);
+  }
+  100% {
+    transform: scale(1.2) translate3d(-4%, 0%, 0);
+  }
+}
+
+@keyframes bannerLightSweep {
+  0% {
+    transform: translateX(-120%);
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.22;
+  }
+  100% {
+    transform: translateX(120%);
+    opacity: 0;
+  }
+}
+
+.animate-pan-horizontal {
+  animation: panBackground 12s cubic-bezier(0.33, 0, 0.18, 1) forwards !important;
+  transform-origin: center center;
+  will-change: transform;
+}
+
+.animate-pan-horizontal-loop {
+  animation: panBackgroundLoop 28s cubic-bezier(0.33, 0, 0.18, 1) infinite !important;
+  transform-origin: center center;
+  will-change: transform;
+}
+
+.animate-banner-light-sweep {
+  animation: bannerLightSweep 9s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-pan-horizontal,
+  .animate-pan-horizontal-loop,
+  .animate-banner-light-sweep {
+    animation: none !important;
+  }
+}
