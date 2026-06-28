@@ -1,7 +1,7 @@
 import express from "express";
 import path from "path";
 import fs from "fs";
-import { randomBytes, timingSafeEqual } from "crypto";
+import { createHash, randomBytes, timingSafeEqual } from "crypto";
 import "dotenv/config";
 import { createServer as createViteServer } from "vite";
 import { createClient } from "@supabase/supabase-js";
@@ -11,7 +11,9 @@ const DB_FILE = path.join(process.cwd(), "db.json");
 const SITE_STATE_ID = "main";
 const ADMIN_SESSION_COOKIE = "huongvu_admin_session";
 const ADMIN_SESSION_HOURS = Number(process.env.ADMIN_SESSION_HOURS || 8);
+const IMAGE_BUCKET = process.env.SUPABASE_IMAGE_BUCKET || "site-images";
 const adminSessions = new Map<string, number>();
+let imageBucketReady = false;
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SECRET_KEY;
 const supabase = supabaseUrl && supabaseServiceKey
@@ -182,6 +184,146 @@ function parseDataUrlImage(value: string) {
   return { buffer, mimeType };
 }
 
+function getImageExtension(mimeType: string) {
+  if (mimeType === "image/png") return "png";
+  if (mimeType === "image/webp") return "webp";
+  if (mimeType === "image/gif") return "gif";
+  return "jpg";
+}
+
+async function ensureImageBucket() {
+  if (!supabase || imageBucketReady) return;
+
+  const { error } = await supabase.storage.getBucket(IMAGE_BUCKET);
+  if (!error) {
+    imageBucketReady = true;
+    return;
+  }
+
+  const { error: createError } = await supabase.storage.createBucket(IMAGE_BUCKET, {
+    public: true,
+    fileSizeLimit: 8 * 1024 * 1024,
+    allowedMimeTypes: ["image/jpeg", "image/png", "image/webp", "image/gif"],
+  });
+
+  if (createError && !String(createError.message || "").toLowerCase().includes("already")) {
+    throw createError;
+  }
+
+  imageBucketReady = true;
+}
+
+async function externalizeDataUrlImage(value: string, folder: string) {
+  if (!supabase || !value.startsWith("data:")) return value;
+
+  const parsed = parseDataUrlImage(value);
+  if (!parsed) return value;
+
+  await ensureImageBucket();
+
+  const hash = createHash("sha256").update(parsed.buffer).digest("hex").slice(0, 24);
+  const extension = getImageExtension(parsed.mimeType);
+  const objectPath = `${folder}/${hash}.${extension}`;
+
+  const { error } = await supabase.storage
+    .from(IMAGE_BUCKET)
+    .upload(objectPath, parsed.buffer, {
+      cacheControl: "31536000",
+      contentType: parsed.mimeType,
+      upsert: true,
+    });
+
+  if (error) throw error;
+
+  const { data } = supabase.storage.from(IMAGE_BUCKET).getPublicUrl(objectPath);
+  return data.publicUrl;
+}
+
+async function externalizeHeroImage(value: string) {
+  const images = getHeroImagesArray(value);
+  if (images.length > 1 || value.startsWith("[")) {
+    const nextImages = await Promise.all(
+      images.map((image, index) => externalizeDataUrlImage(image, `hero/${index}`))
+    );
+    return JSON.stringify(nextImages);
+  }
+
+  return externalizeDataUrlImage(value, "hero");
+}
+
+async function externalizeDBImages(state: DBState): Promise<DBState> {
+  if (!supabase) return state;
+
+  const products = await Promise.all(
+    state.products.map(async (product) => {
+      const safeId = encodeURIComponent(String(product.id || "product"));
+      const image = typeof product.image === "string"
+        ? await externalizeDataUrlImage(product.image, `products/${safeId}`)
+        : product.image;
+      const images = Array.isArray(product.images)
+        ? await Promise.all(
+            product.images.map((item: unknown, index: number) =>
+              typeof item === "string"
+                ? externalizeDataUrlImage(item, `products/${safeId}/${index}`)
+                : item
+            )
+          )
+        : product.images;
+
+      return { ...product, image, images };
+    })
+  );
+
+  const categories = await Promise.all(
+    state.categories.map(async (category) => {
+      const safeId = encodeURIComponent(String(category.id || "category"));
+      const image = typeof category.image === "string"
+        ? await externalizeDataUrlImage(category.image, `categories/${safeId}`)
+        : category.image;
+      return { ...category, image };
+    })
+  );
+
+  return {
+    ...state,
+    products,
+    categories,
+    heroImage: await externalizeHeroImage(state.heroImage),
+  };
+}
+
+async function createSiteBackup(label = "auto") {
+  if (!supabase) return;
+
+  try {
+    const { data, error } = await supabase
+      .from("site_state")
+      .select("data")
+      .eq("id", SITE_STATE_ID)
+      .maybeSingle();
+
+    if (error || !data?.data) {
+      if (error) console.warn("Backup skipped because current state could not be read:", error);
+      return;
+    }
+
+    const backupId = `backup_${new Date().toISOString().replace(/[:.]/g, "-")}_${label}_${randomBytes(3).toString("hex")}`;
+    const { error: backupError } = await supabase
+      .from("site_state")
+      .upsert({
+        id: backupId,
+        data: data.data,
+        updated_at: new Date().toISOString(),
+      });
+
+    if (backupError) {
+      console.warn("Backup skipped because insert failed:", backupError);
+    }
+  } catch (err) {
+    console.warn("Backup skipped:", err);
+  }
+}
+
 async function loadDB(): Promise<DBState> {
   if (supabase) {
     try {
@@ -213,11 +355,15 @@ async function loadDB(): Promise<DBState> {
   return getDefaultDB();
 }
 
-async function saveDB(state: DBState) {
-  const normalized = normalizeDB(state);
+async function saveDB(state: DBState, options: { backup?: boolean; label?: string } = {}) {
+  const normalized = await externalizeDBImages(normalizeDB(state));
 
   if (supabase) {
     try {
+      if (options.backup) {
+        await createSiteBackup(options.label);
+      }
+
       const { error } = await supabase
         .from("site_state")
         .upsert({
@@ -226,7 +372,7 @@ async function saveDB(state: DBState) {
           updated_at: new Date().toISOString(),
         });
       if (error) throw error;
-      return;
+      return normalized;
     } catch (err) {
       console.error("Error saving Supabase, falling back to db.json: ", err);
     }
@@ -237,6 +383,8 @@ async function saveDB(state: DBState) {
   } catch (err) {
     console.error("Error saving db.json: ", err);
   }
+
+  return normalized;
 }
 
 function formatVND(num: number) {
@@ -523,6 +671,57 @@ async function startServer() {
     res.json({ success: true, expiresAt: session.expiresAt });
   });
 
+  app.get("/api/admin/backups", requireAdmin, async (_req, res) => {
+    if (!supabase) {
+      res.json({ success: true, backups: [] });
+      return;
+    }
+
+    const { data, error } = await supabase
+      .from("site_state")
+      .select("id,updated_at")
+      .like("id", "backup_%")
+      .order("updated_at", { ascending: false })
+      .limit(50);
+
+    if (error) {
+      res.status(500).json({ success: false, error: "Không thể đọc danh sách backup." });
+      return;
+    }
+
+    res.json({ success: true, backups: data || [] });
+  });
+
+  app.post("/api/admin/restore_backup", requireAdmin, async (req, res) => {
+    if (!supabase) {
+      res.status(400).json({ success: false, error: "Supabase chưa được cấu hình." });
+      return;
+    }
+
+    const { backupId } = req.body || {};
+    if (typeof backupId !== "string" || !backupId.startsWith("backup_")) {
+      res.status(400).json({ success: false, error: "Backup không hợp lệ." });
+      return;
+    }
+
+    const { data, error } = await supabase
+      .from("site_state")
+      .select("data")
+      .eq("id", backupId)
+      .maybeSingle();
+
+    if (error || !data?.data) {
+      res.status(404).json({ success: false, error: "Không tìm thấy backup." });
+      return;
+    }
+
+    const restored = await saveDB(normalizeDB(data.data as Partial<DBState>), {
+      backup: true,
+      label: "before_restore",
+    });
+    res.json({ success: true, data: restored });
+  });
+
   app.post("/api/products", requireAdmin, async (req, res) => {
     const { products } = req.body;
     if (!Array.isArray(products)) {
@@ -531,8 +730,8 @@ async function startServer() {
     }
     const db = await loadDB();
     db.products = products;
-    await saveDB(db);
-    res.json({ success: true, products: db.products });
+    const saved = await saveDB(db, { backup: true, label: "products" });
+    res.json({ success: true, products: saved.products });
   });
 
   app.post("/api/categories", requireAdmin, async (req, res) => {
@@ -543,8 +742,8 @@ async function startServer() {
     }
     const db = await loadDB();
     db.categories = categories;
-    await saveDB(db);
-    res.json({ success: true, categories: db.categories });
+    const saved = await saveDB(db, { backup: true, label: "categories" });
+    res.json({ success: true, categories: saved.categories });
   });
 
   app.post("/api/about_us", requireAdmin, async (req, res) => {
@@ -555,8 +754,8 @@ async function startServer() {
     }
     const db = await loadDB();
     db.aboutUs = aboutUs;
-    await saveDB(db);
-    res.json({ success: true, aboutUs: db.aboutUs });
+    const saved = await saveDB(db, { backup: true, label: "about" });
+    res.json({ success: true, aboutUs: saved.aboutUs });
   });
 
   app.post("/api/contact", requireAdmin, async (req, res) => {
@@ -567,8 +766,8 @@ async function startServer() {
     }
     const db = await loadDB();
     db.contact = contact;
-    await saveDB(db);
-    res.json({ success: true, contact: db.contact });
+    const saved = await saveDB(db, { backup: true, label: "contact" });
+    res.json({ success: true, contact: saved.contact });
   });
 
   app.post("/api/hero_image", requireAdmin, async (req, res) => {
@@ -579,8 +778,8 @@ async function startServer() {
     }
     const db = await loadDB();
     db.heroImage = heroImage;
-    await saveDB(db);
-    res.json({ success: true, heroImage: db.heroImage });
+    const saved = await saveDB(db, { backup: true, label: "hero" });
+    res.json({ success: true, heroImage: saved.heroImage });
   });
 
   app.get("/api/orders", async (req, res) => {
@@ -596,9 +795,9 @@ async function startServer() {
     }
     const db = await loadDB();
     db.orders = [order, ...db.orders];
-    await saveDB(db);
+    const saved = await saveDB(db);
     void notifyTelegramNewOrder(order);
-    res.json({ success: true, orders: db.orders });
+    res.json({ success: true, orders: saved.orders });
   });
 
   app.post("/api/set_orders", requireAdmin, async (req, res) => {
@@ -609,8 +808,8 @@ async function startServer() {
     }
     const db = await loadDB();
     db.orders = orders;
-    await saveDB(db);
-    res.json({ success: true, orders: db.orders });
+    const saved = await saveDB(db, { backup: true, label: "orders" });
+    res.json({ success: true, orders: saved.orders });
   });
 
   app.post("/api/consultations", async (req, res) => {
@@ -621,9 +820,9 @@ async function startServer() {
     }
     const db = await loadDB();
     db.consultations = [consultation, ...(db.consultations || [])];
-    await saveDB(db);
+    const saved = await saveDB(db);
     void notifyTelegramNewConsultation(consultation);
-    res.json({ success: true, consultations: db.consultations });
+    res.json({ success: true, consultations: saved.consultations });
   });
 
   app.post("/api/telegram/test", requireAdmin, async (req, res) => {
@@ -650,14 +849,14 @@ async function startServer() {
     }
     const db = await loadDB();
     db.consultations = consultations;
-    await saveDB(db);
-    res.json({ success: true, consultations: db.consultations });
+    const saved = await saveDB(db, { backup: true, label: "consultations" });
+    res.json({ success: true, consultations: saved.consultations });
   });
 
   app.post("/api/reset", requireAdmin, async (req, res) => {
     const freshDB = getDefaultDB();
-    await saveDB(freshDB);
-    res.json({ success: true, data: freshDB });
+    const saved = await saveDB(freshDB, { backup: true, label: "reset" });
+    res.json({ success: true, data: saved });
   });
 
   // Vite middle-layer integration
