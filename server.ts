@@ -105,6 +105,49 @@ function normalizeDB(parsed: Partial<DBState>): DBState {
   };
 }
 
+function getHeroImagesArray(value: string): string[] {
+  try {
+    if (value && value.startsWith("[")) {
+      const parsed = JSON.parse(value);
+      if (Array.isArray(parsed)) return parsed.filter((item): item is string => typeof item === "string");
+    }
+  } catch (err) {
+    console.warn("Failed to parse hero image list:", err);
+  }
+
+  return value ? [value] : [];
+}
+
+function asHeroImageResponse(value: string) {
+  const images = getHeroImagesArray(value);
+  if (images.length <= 1) {
+    const firstImage = images[0] || value;
+    return firstImage.startsWith("data:") ? "/api/hero-image/0" : firstImage;
+  }
+  return JSON.stringify(images.map((_, index) => `/api/hero-image/${index}`));
+}
+
+function getPublicDB(state: DBState): DBState {
+  return {
+    ...state,
+    heroImage: asHeroImageResponse(state.heroImage),
+    orders: [],
+    consultations: [],
+  };
+}
+
+function parseDataUrlImage(value: string) {
+  const match = value.match(/^data:([^;,]+)(;base64)?,(.*)$/);
+  if (!match) return null;
+
+  const [, mimeType, isBase64, payload] = match;
+  const buffer = isBase64
+    ? Buffer.from(payload, "base64")
+    : Buffer.from(decodeURIComponent(payload), "utf-8");
+
+  return { buffer, mimeType };
+}
+
 async function loadDB(): Promise<DBState> {
   if (supabase) {
     try {
@@ -312,7 +355,34 @@ async function startServer() {
   // API Routes
   app.get("/api/data", async (req, res) => {
     const db = await loadDB();
-    res.json(db);
+    res.json(getAdminSession(req) ? db : getPublicDB(db));
+  });
+
+  app.get("/api/hero-image/:index", async (req, res) => {
+    const index = Number(req.params.index || 0);
+    const db = await loadDB();
+    const images = getHeroImagesArray(db.heroImage);
+    const image = images[index];
+
+    if (!image) {
+      res.status(404).send("Hero image not found");
+      return;
+    }
+
+    if (!image.startsWith("data:")) {
+      res.redirect(image);
+      return;
+    }
+
+    const parsed = parseDataUrlImage(image);
+    if (!parsed) {
+      res.status(400).send("Invalid hero image");
+      return;
+    }
+
+    res.setHeader("Content-Type", parsed.mimeType);
+    res.setHeader("Cache-Control", "public, max-age=3600");
+    res.send(parsed.buffer);
   });
 
   app.post("/api/admin/login", (req, res) => {

@@ -38,6 +38,25 @@ export default function Hero({ onExploreClick, heroImage, contactData }: HeroPro
     return () => clearInterval(timer);
   }, [images.length]);
 
+  useEffect(() => {
+    const firstImage = images[0];
+    if (!firstImage || firstImage.startsWith("data:")) return;
+
+    const existing = document.querySelector<HTMLLinkElement>(`link[rel="preload"][href="${firstImage}"]`);
+    if (existing) return;
+
+    const link = document.createElement("link");
+    link.rel = "preload";
+    link.as = "image";
+    link.href = firstImage;
+    link.fetchPriority = "high";
+    document.head.appendChild(link);
+
+    return () => {
+      link.remove();
+    };
+  }, [images]);
+
   return (
     <>
     <section className="relative min-h-[calc(100svh-88px)] md:min-h-[calc(100svh-96px)] flex items-center justify-center overflow-hidden bg-[#0d1f15] text-white">
@@ -48,13 +67,16 @@ export default function Hero({ onExploreClick, heroImage, contactData }: HeroPro
             key={img + idx}
             src={img}
             alt="Majestic Tây Bắc Mountains"
-            initial={{ opacity: 0 }}
+            initial={false}
             animate={{ 
               opacity: idx === currentIndex ? 1 : 0
             }}
             transition={{ 
-              opacity: { duration: 1.5, ease: "easeInOut" }
+              opacity: { duration: images.length > 1 ? 0.6 : 0, ease: "easeOut" }
             }}
+            loading={idx === 0 ? "eager" : "lazy"}
+            fetchPriority={idx === 0 ? "high" : "auto"}
+            decoding="async"
             className={`absolute inset-0 w-full h-full object-cover ${
               idx === currentIndex 
                 ? (images.length > 1 ? "animate-pan-horizontal" : "animate-pan-horizontal-loop") 

@@ -19,6 +19,7 @@ import AdminPanel from "./components/AdminPanel";
 import { Product, CartItem, OrderDetails, Category, AboutUsData, ContactData, ConsultationRequest } from "./types";
 import { products as initialProducts, categories as initialCategories } from "./data";
 import { Sparkles, Eye, ShieldCheck, Heart, User, Clock, ArrowRight, X, ShoppingCart } from "lucide-react";
+import defaultHeroImage from "./assets/images/hero_vietnam_mountains_new_1781779741604.jpg";
 
 interface SiteDataState {
   products?: Product[];
@@ -160,7 +161,7 @@ export default function App() {
 
   const [consultations, setConsultations] = useState<ConsultationRequest[]>([]);
 
-  const [heroImage, setHeroImage] = useState<string>("/src/assets/images/hero_vietnam_mountains_new_1781779741604.jpg");
+  const [heroImage, setHeroImage] = useState<string>(defaultHeroImage);
 
   const [isAdminOpen, setIsAdminOpen] = useState(false);
 
