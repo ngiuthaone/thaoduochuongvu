@@ -525,6 +525,12 @@ async function notifyTelegramNewConsultation(consultation: any) {
   await sendTelegramMessage(text);
 }
 
+function sendAdminSaveError(res: express.Response, error: unknown, fallback: string) {
+  console.error(fallback, error);
+  const message = error instanceof Error ? error.message : fallback;
+  res.status(500).json({ success: false, error: message || fallback });
+}
+
 async function startServer() {
   const app = express();
   const PORT = Number(process.env.PORT || 3000);
@@ -722,63 +728,83 @@ async function startServer() {
   });
 
   app.post("/api/products", requireAdmin, async (req, res) => {
-    const { products } = req.body;
-    if (!Array.isArray(products)) {
-       res.status(400).json({ error: "Invalid products array" });
-       return;
+    try {
+      const { products } = req.body;
+      if (!Array.isArray(products)) {
+         res.status(400).json({ error: "Invalid products array" });
+         return;
+      }
+      const db = await loadDB();
+      db.products = products;
+      const saved = await saveDB(db, { backup: true, label: "products" });
+      res.json({ success: true, products: saved.products });
+    } catch (error) {
+      sendAdminSaveError(res, error, "Không thể lưu sản phẩm.");
     }
-    const db = await loadDB();
-    db.products = products;
-    const saved = await saveDB(db, { backup: true, label: "products" });
-    res.json({ success: true, products: saved.products });
   });
 
   app.post("/api/categories", requireAdmin, async (req, res) => {
-    const { categories } = req.body;
-    if (!Array.isArray(categories)) {
-       res.status(400).json({ error: "Invalid categories array" });
-       return;
+    try {
+      const { categories } = req.body;
+      if (!Array.isArray(categories)) {
+         res.status(400).json({ error: "Invalid categories array" });
+         return;
+      }
+      const db = await loadDB();
+      db.categories = categories;
+      const saved = await saveDB(db, { backup: true, label: "categories" });
+      res.json({ success: true, categories: saved.categories });
+    } catch (error) {
+      sendAdminSaveError(res, error, "Không thể lưu danh mục.");
     }
-    const db = await loadDB();
-    db.categories = categories;
-    const saved = await saveDB(db, { backup: true, label: "categories" });
-    res.json({ success: true, categories: saved.categories });
   });
 
   app.post("/api/about_us", requireAdmin, async (req, res) => {
-    const { aboutUs } = req.body;
-    if (!aboutUs) {
-       res.status(400).json({ error: "Invalid aboutUs data" });
-       return;
+    try {
+      const { aboutUs } = req.body;
+      if (!aboutUs) {
+         res.status(400).json({ error: "Invalid aboutUs data" });
+         return;
+      }
+      const db = await loadDB();
+      db.aboutUs = aboutUs;
+      const saved = await saveDB(db, { backup: true, label: "about" });
+      res.json({ success: true, aboutUs: saved.aboutUs });
+    } catch (error) {
+      sendAdminSaveError(res, error, "Không thể lưu phần giới thiệu.");
     }
-    const db = await loadDB();
-    db.aboutUs = aboutUs;
-    const saved = await saveDB(db, { backup: true, label: "about" });
-    res.json({ success: true, aboutUs: saved.aboutUs });
   });
 
   app.post("/api/contact", requireAdmin, async (req, res) => {
-    const { contact } = req.body;
-    if (!contact) {
-       res.status(400).json({ error: "Invalid contact data" });
-       return;
+    try {
+      const { contact } = req.body;
+      if (!contact) {
+         res.status(400).json({ error: "Invalid contact data" });
+         return;
+      }
+      const db = await loadDB();
+      db.contact = contact;
+      const saved = await saveDB(db, { backup: true, label: "contact" });
+      res.json({ success: true, contact: saved.contact });
+    } catch (error) {
+      sendAdminSaveError(res, error, "Không thể lưu thông tin liên hệ.");
     }
-    const db = await loadDB();
-    db.contact = contact;
-    const saved = await saveDB(db, { backup: true, label: "contact" });
-    res.json({ success: true, contact: saved.contact });
   });
 
   app.post("/api/hero_image", requireAdmin, async (req, res) => {
-    const { heroImage } = req.body;
-    if (typeof heroImage !== "string") {
-       res.status(400).json({ error: "Invalid heroImage string" });
-       return;
+    try {
+      const { heroImage } = req.body;
+      if (typeof heroImage !== "string") {
+         res.status(400).json({ error: "Invalid heroImage string" });
+         return;
+      }
+      const db = await loadDB();
+      db.heroImage = heroImage;
+      const saved = await saveDB(db, { backup: true, label: "hero" });
+      res.json({ success: true, heroImage: saved.heroImage });
+    } catch (error) {
+      sendAdminSaveError(res, error, "Không thể lưu ảnh bìa.");
     }
-    const db = await loadDB();
-    db.heroImage = heroImage;
-    const saved = await saveDB(db, { backup: true, label: "hero" });
-    res.json({ success: true, heroImage: saved.heroImage });
   });
 
   app.get("/api/orders", async (req, res) => {
@@ -800,15 +826,19 @@ async function startServer() {
   });
 
   app.post("/api/set_orders", requireAdmin, async (req, res) => {
-    const { orders } = req.body;
-    if (!Array.isArray(orders)) {
-      res.status(400).json({ error: "Invalid orders array" });
-      return;
+    try {
+      const { orders } = req.body;
+      if (!Array.isArray(orders)) {
+        res.status(400).json({ error: "Invalid orders array" });
+        return;
+      }
+      const db = await loadDB();
+      db.orders = orders;
+      const saved = await saveDB(db, { backup: true, label: "orders" });
+      res.json({ success: true, orders: saved.orders });
+    } catch (error) {
+      sendAdminSaveError(res, error, "Không thể lưu trạng thái đơn hàng.");
     }
-    const db = await loadDB();
-    db.orders = orders;
-    const saved = await saveDB(db, { backup: true, label: "orders" });
-    res.json({ success: true, orders: saved.orders });
   });
 
   app.post("/api/consultations", async (req, res) => {
@@ -841,21 +871,29 @@ async function startServer() {
   });
 
   app.post("/api/set_consultations", requireAdmin, async (req, res) => {
-    const { consultations } = req.body;
-    if (!Array.isArray(consultations)) {
-      res.status(400).json({ error: "Invalid consultations array" });
-      return;
+    try {
+      const { consultations } = req.body;
+      if (!Array.isArray(consultations)) {
+        res.status(400).json({ error: "Invalid consultations array" });
+        return;
+      }
+      const db = await loadDB();
+      db.consultations = consultations;
+      const saved = await saveDB(db, { backup: true, label: "consultations" });
+      res.json({ success: true, consultations: saved.consultations });
+    } catch (error) {
+      sendAdminSaveError(res, error, "Không thể lưu thay đổi tư vấn.");
     }
-    const db = await loadDB();
-    db.consultations = consultations;
-    const saved = await saveDB(db, { backup: true, label: "consultations" });
-    res.json({ success: true, consultations: saved.consultations });
   });
 
   app.post("/api/reset", requireAdmin, async (req, res) => {
-    const freshDB = getDefaultDB();
-    const saved = await saveDB(freshDB, { backup: true, label: "reset" });
-    res.json({ success: true, data: saved });
+    try {
+      const freshDB = getDefaultDB();
+      const saved = await saveDB(freshDB, { backup: true, label: "reset" });
+      res.json({ success: true, data: saved });
+    } catch (error) {
+      sendAdminSaveError(res, error, "Không thể khôi phục dữ liệu gốc.");
+    }
   });
 
   // Vite middle-layer integration

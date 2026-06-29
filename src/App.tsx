@@ -212,7 +212,9 @@ export default function App() {
       throw new Error("Phiên quản trị đã hết hạn. Vui lòng đăng nhập lại.");
     }
     if (!res.ok) {
-      throw new Error("Không thể lưu thay đổi lên server.");
+      return res.json().catch(() => null).then((body) => {
+        throw new Error(body?.error || "Không thể lưu thay đổi lên server.");
+      });
     }
     return res.json();
   };
@@ -225,18 +227,20 @@ export default function App() {
   }, [syncServerData]);
 
   const handleSetConsultations = (newConsults: ConsultationRequest[]) => {
-    setConsultations(newConsults);
-    fetch("/api/set_consultations", {
+    return fetch("/api/set_consultations", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "same-origin",
       body: JSON.stringify({ consultations: newConsults }),
     })
       .then(parseAdminResponse)
-      .then((data) => data.consultations && setConsultations(data.consultations))
+      .then((data) => {
+        if (data.consultations) setConsultations(data.consultations);
+      })
       .catch((err) => {
         alert(err.message || "Không thể lưu thay đổi tư vấn.");
         syncServerData();
+        throw err;
       });
   };
 
@@ -262,82 +266,92 @@ export default function App() {
   };
 
   const handleSetContactData = (newContact: ContactData) => {
-    setContactData(newContact);
-    fetch("/api/contact", {
+    return fetch("/api/contact", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "same-origin",
       body: JSON.stringify({ contact: newContact }),
     })
       .then(parseAdminResponse)
-      .then((data) => data.contact && setContactData({ ...defaultContact, ...data.contact }))
+      .then((data) => {
+        if (data.contact) setContactData({ ...defaultContact, ...data.contact });
+      })
       .catch((err) => {
         alert(err.message || "Không thể lưu thông tin liên hệ.");
         syncServerData();
+        throw err;
       });
   };
 
   const handleSetProducts = (newProds: Product[]) => {
-    setProductsList(newProds);
-    fetch("/api/products", {
+    return fetch("/api/products", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "same-origin",
       body: JSON.stringify({ products: newProds }),
     })
       .then(parseAdminResponse)
-      .then((data) => data.products && setProductsList(data.products))
+      .then((data) => {
+        if (data.products) setProductsList(data.products);
+      })
       .catch((err) => {
         alert(err.message || "Không thể lưu sản phẩm.");
         syncServerData();
+        throw err;
       });
   };
 
   const handleSetCategories = (newCats: Category[]) => {
-    setCategoriesList(newCats);
-    fetch("/api/categories", {
+    return fetch("/api/categories", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "same-origin",
       body: JSON.stringify({ categories: newCats }),
     })
       .then(parseAdminResponse)
-      .then((data) => data.categories && setCategoriesList(data.categories))
+      .then((data) => {
+        if (data.categories) setCategoriesList(data.categories);
+      })
       .catch((err) => {
         alert(err.message || "Không thể lưu danh mục.");
         syncServerData();
+        throw err;
       });
   };
 
   const handleSetAboutUsData = (newAbout: AboutUsData) => {
-    setAboutUsData(newAbout);
-    fetch("/api/about_us", {
+    return fetch("/api/about_us", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "same-origin",
       body: JSON.stringify({ aboutUs: newAbout }),
     })
       .then(parseAdminResponse)
-      .then((data) => data.aboutUs && setAboutUsData(data.aboutUs))
+      .then((data) => {
+        if (data.aboutUs) setAboutUsData(data.aboutUs);
+      })
       .catch((err) => {
         alert(err.message || "Không thể lưu phần giới thiệu.");
         syncServerData();
+        throw err;
       });
   };
 
   const handleSetOrders = (newOrders: OrderDetails[]) => {
-    setOrders(newOrders);
-    fetch("/api/set_orders", {
+    return fetch("/api/set_orders", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "same-origin",
       body: JSON.stringify({ orders: newOrders }),
     })
       .then(parseAdminResponse)
-      .then((data) => data.orders && setOrders(data.orders))
+      .then((data) => {
+        if (data.orders) setOrders(data.orders);
+      })
       .catch((err) => {
         alert(err.message || "Không thể lưu trạng thái đơn hàng.");
         syncServerData();
+        throw err;
       });
   };
 
@@ -354,18 +368,20 @@ export default function App() {
   };
 
   const handleSetHeroImage = (newImage: string) => {
-    setHeroImage(newImage);
-    fetch("/api/hero_image", {
+    return fetch("/api/hero_image", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "same-origin",
       body: JSON.stringify({ heroImage: newImage }),
     })
       .then(parseAdminResponse)
-      .then((data) => data.heroImage && setHeroImage(data.heroImage))
+      .then((data) => {
+        if (data.heroImage) setHeroImage(data.heroImage);
+      })
       .catch((err) => {
         alert(err.message || "Không thể lưu ảnh bìa.");
         syncServerData();
+        throw err;
       });
   };
 

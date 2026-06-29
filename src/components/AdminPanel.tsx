@@ -6,23 +6,25 @@ import {
 } from "lucide-react";
 import { Product, OrderDetails, Category, AboutUsData, ContactData, ConsultationRequest } from "../types";
 
+type MaybePromise<T = void | boolean> = T | Promise<T>;
+
 interface AdminPanelProps {
   isOpen: boolean;
   onClose: () => void;
   products: Product[];
-  setProducts: (products: Product[]) => void;
+  setProducts: (products: Product[]) => MaybePromise;
   orders: OrderDetails[];
-  setOrders: (orders: OrderDetails[]) => void;
+  setOrders: (orders: OrderDetails[]) => MaybePromise;
   heroImage: string;
-  setHeroImage: (url: string) => void;
+  setHeroImage: (url: string) => MaybePromise;
   categories: Category[];
-  setCategories: (cats: Category[]) => void;
+  setCategories: (cats: Category[]) => MaybePromise;
   aboutUsData: AboutUsData;
-  setAboutUsData: (data: AboutUsData) => void;
+  setAboutUsData: (data: AboutUsData) => MaybePromise;
   contactData: ContactData;
-  setContactData: (data: ContactData) => void;
+  setContactData: (data: ContactData) => MaybePromise;
   consultations: ConsultationRequest[];
-  setConsultations: (consultation: ConsultationRequest[]) => void;
+  setConsultations: (consultation: ConsultationRequest[]) => MaybePromise;
 }
 
 export default function AdminPanel({
@@ -80,8 +82,9 @@ export default function AdminPanel({
     description?: string;
     confirmLabel?: string;
     confirmBg?: string;
-    onConfirm: () => void;
+    onConfirm: () => MaybePromise;
   } | null>(null);
+  const [isSavingAdminChange, setIsSavingAdminChange] = useState(false);
   
   // Product Form states
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
@@ -323,9 +326,10 @@ export default function AdminPanel({
   const handleAddHeroImage = (base64Img: string) => {
     // If the existing list only contains a placeholder, replace it or append
     const newList = [...heroImagesList, base64Img];
-    setHeroImagesList(newList);
-    setHeroImage(JSON.stringify(newList));
-    showToast("Đã tải thêm ảnh bìa vào danh sách slideshow thành công!");
+    void persistAdminChange(
+      () => setHeroImage(JSON.stringify(newList)),
+      "Đã tải thêm ảnh bìa vào danh sách slideshow thành công!"
+    );
   };
 
   const handleDeleteHeroImage = (index: number) => {
@@ -334,9 +338,10 @@ export default function AdminPanel({
       return;
     }
     const newList = heroImagesList.filter((_, idx) => idx !== index);
-    setHeroImagesList(newList);
-    setHeroImage(JSON.stringify(newList));
-    showToast("Đã xóa ảnh khỏi danh sách slideshow!");
+    void persistAdminChange(
+      () => setHeroImage(JSON.stringify(newList)),
+      "Đã xóa ảnh khỏi danh sách slideshow!"
+    );
   };
 
   const handleMoveHeroImage = (index: number, direction: "up" | "down") => {
@@ -349,8 +354,10 @@ export default function AdminPanel({
     newList[index] = newList[targetIdx];
     newList[targetIdx] = temp;
     
-    setHeroImagesList(newList);
-    setHeroImage(JSON.stringify(newList));
+    void persistAdminChange(
+      () => setHeroImage(JSON.stringify(newList)),
+      "Đã đổi thứ tự ảnh bìa thành công!"
+    );
   };
 
   // Trigger File Upload for Hero Image
@@ -370,6 +377,21 @@ export default function AdminPanel({
   const showToast = (msg: string) => {
     setSuccessMsg(msg);
     setTimeout(() => setSuccessMsg(""), 3000);
+  };
+
+  const persistAdminChange = async (action: () => MaybePromise, successMessage: string) => {
+    if (isSavingAdminChange) return false;
+    setIsSavingAdminChange(true);
+    try {
+      await action();
+      showToast(successMessage);
+      return true;
+    } catch (error) {
+      console.error("Không thể lưu thay đổi quản trị:", error);
+      return false;
+    } finally {
+      setIsSavingAdminChange(false);
+    }
   };
 
   const handleLoginAdmin = async (e: FormEvent) => {
@@ -453,7 +475,7 @@ export default function AdminPanel({
   };
 
   // Save product details
-  const handleSaveProduct = (e: FormEvent) => {
+  const handleSaveProduct = async (e: FormEvent) => {
     e.preventDefault();
     const finalImages = formImages.filter(Boolean);
     const primaryImage = finalImages[0] || formImage;
@@ -481,17 +503,18 @@ export default function AdminPanel({
       showOnLanding: formShowOnLanding,
     };
 
-    if (editingProduct) {
-      setProducts(products.map((p) => (p.id === editingProduct.id ? payload : p)));
-      showToast("Đã cập nhật sản phẩm thành công!");
-    } else {
-      setProducts([payload, ...products]);
-      showToast("Đã thêm mới sản phẩm thành công!");
-    }
+    const nextProducts = editingProduct
+      ? products.map((p) => (p.id === editingProduct.id ? payload : p))
+      : [payload, ...products];
+    const saved = await persistAdminChange(
+      () => setProducts(nextProducts),
+      editingProduct ? "Đã cập nhật sản phẩm thành công!" : "Đã thêm mới sản phẩm thành công!"
+    );
 
-    // Reset forms
-    setIsAddingNew(false);
-    setEditingProduct(null);
+    if (saved) {
+      setIsAddingNew(false);
+      setEditingProduct(null);
+    }
   };
 
   // Delete product
@@ -501,10 +524,10 @@ export default function AdminPanel({
       message: "Bạn có chắc chắn muốn xóa sản phẩm thảo dược này khỏi menu cửa hàng?",
       description: "Hành động này sẽ xóa vĩnh viễn sản phẩm khỏi danh sách hiển thị và không thể hoàn tác.",
       confirmLabel: "Xác nhận xóa",
-      onConfirm: () => {
-        setProducts(products.filter((p) => p.id !== id));
-        showToast("Đã xóa sản phẩm thành công!");
-      }
+      onConfirm: () => persistAdminChange(
+        () => setProducts(products.filter((p) => p.id !== id)),
+        "Đã xóa sản phẩm thành công!"
+      )
     });
   };
 
@@ -515,14 +538,14 @@ export default function AdminPanel({
       message: "Bạn muốn xóa thông tin hóa đơn lưu trữ này?",
       description: "Mọi thông tin chi tiết của đơn hàng này sẽ biến mất khỏi nhật ký.",
       confirmLabel: "Xác nhận xóa",
-      onConfirm: () => {
-        setOrders(orders.filter(o => 
+      onConfirm: () => persistAdminChange(
+        () => setOrders(orders.filter(o => 
           !(o.createdAt === orderToDelete.createdAt && 
             o.fullName === orderToDelete.fullName && 
             o.phoneNumber === orderToDelete.phoneNumber)
-        ));
-        showToast("Đã xóa đơn hàng lưu vết!");
-      }
+        )),
+        "Đã xóa đơn hàng lưu vết!"
+      )
     });
   };
 
@@ -536,10 +559,12 @@ export default function AdminPanel({
       }
       return o;
     });
-    setOrders(updated);
-    showToast(`Đã cập nhật trạng thái đơn hàng thành: ${
-      status === "preparing" ? "Đang chuẩn bị" : status === "delivering" ? "Đang giao hàng" : "Đã giao hàng"
-    }`);
+    void persistAdminChange(
+      () => setOrders(updated),
+      `Đã cập nhật trạng thái đơn hàng thành: ${
+        status === "preparing" ? "Đang chuẩn bị" : status === "delivering" ? "Đang giao hàng" : "Đã giao hàng"
+      }`
+    );
   };
 
   // Categories Form Handlers
@@ -556,7 +581,7 @@ export default function AdminPanel({
     }
   };
 
-  const handleSaveCategory = (e: FormEvent) => {
+  const handleSaveCategory = async (e: FormEvent) => {
     e.preventDefault();
     if (!catFormName.trim() || !catFormTagline.trim() || !catFormImage) {
       alert("Vui lòng nhập tên danh mục, khẩu hiệu và hình ảnh minh họa!");
@@ -572,20 +597,22 @@ export default function AdminPanel({
       showOnLanding: catFormShowOnLanding,
     };
 
-    if (editingCategory) {
-      setCategories(categories.map((c) => (c.id === editingCategory.id ? payload : c)));
-      showToast("Đã cập nhật danh mục thành công!");
-    } else {
-      setCategories([...categories, payload]);
-      showToast("Đã thêm mới danh mục thành công!");
-    }
+    const nextCategories = editingCategory
+      ? categories.map((c) => (c.id === editingCategory.id ? payload : c))
+      : [...categories, payload];
+    const saved = await persistAdminChange(
+      () => setCategories(nextCategories),
+      editingCategory ? "Đã cập nhật danh mục thành công!" : "Đã thêm mới danh mục thành công!"
+    );
 
-    setIsAddingCategory(false);
-    setEditingCategory(null);
-    setCatFormName("");
-    setCatFormTagline("");
-    setCatFormImage("");
-    setCatFormShowOnLanding(true);
+    if (saved) {
+      setIsAddingCategory(false);
+      setEditingCategory(null);
+      setCatFormName("");
+      setCatFormTagline("");
+      setCatFormImage("");
+      setCatFormShowOnLanding(true);
+    }
   };
 
   const handleDeleteCategory = (id: string) => {
@@ -597,26 +624,26 @@ export default function AdminPanel({
         message: "Danh mục này đang chứa một số sản phẩm đang được bán. Nếu xóa, các sản phẩm thuộc danh mục sẽ không hiển thị trên bộ lọc. Bạn vẫn muốn xóa chứ?",
         description: "Các sản phẩm không bị xóa nhưng sẽ mất liên kết danh mục hiển thị.",
         confirmLabel: "Xác nhận xóa",
-        onConfirm: () => {
-          setCategories(categories.filter((c) => c.id !== id));
-          showToast("Đã xóa danh mục thành công!");
-        }
+        onConfirm: () => persistAdminChange(
+          () => setCategories(categories.filter((c) => c.id !== id)),
+          "Đã xóa danh mục thành công!"
+        )
       });
     } else {
       setConfirmModal({
         title: "Xác nhận xóa danh mục",
         message: "Bạn có chắc chắn muốn xóa danh mục phân loại này không?",
         confirmLabel: "Xác nhận xóa",
-        onConfirm: () => {
-          setCategories(categories.filter((c) => c.id !== id));
-          showToast("Đã xóa danh mục thành công!");
-        }
+        onConfirm: () => persistAdminChange(
+          () => setCategories(categories.filter((c) => c.id !== id)),
+          "Đã xóa danh mục thành công!"
+        )
       });
     }
   };
 
   // About Us Form Handler
-  const handleSaveAboutUs = (e: FormEvent) => {
+  const handleSaveAboutUs = async (e: FormEvent) => {
     e.preventDefault();
     const payload: AboutUsData = {
       subtitle: aboutSubtitle.trim(),
@@ -628,12 +655,14 @@ export default function AdminPanel({
       statNumber: aboutStatNumber.trim(),
       statLabel: aboutStatLabel.trim(),
     };
-    setAboutUsData(payload);
-    showToast("Đã lưu đổi mới thông tin Giới thiệu thành công!");
+    await persistAdminChange(
+      () => setAboutUsData(payload),
+      "Đã lưu đổi mới thông tin Giới thiệu thành công!"
+    );
   };
 
   // Contact Form Handler
-  const handleSaveContact = (e: FormEvent) => {
+  const handleSaveContact = async (e: FormEvent) => {
     e.preventDefault();
     const payload: ContactData = {
       companyName: contactCompany.trim(),
@@ -670,14 +699,18 @@ export default function AdminPanel({
       showAboutSection,
       showContactSection,
     };
-    setContactData(payload);
-    showToast("Đã lưu đổi mới thông tin Liên hệ & Thương hiệu thành công!");
+    await persistAdminChange(
+      () => setContactData(payload),
+      "Đã lưu đổi mới thông tin Liên hệ & Thương hiệu thành công!"
+    );
   };
 
   const handleUpdateConsultStatus = (id: string, status: "pending" | "called" | "cancelled") => {
     const updated = consultations.map(c => c.id === id ? { ...c, status } : c);
-    setConsultations(updated);
-    showToast("Đã cập nhật trạng thái yêu cầu tư vấn thành công!");
+    void persistAdminChange(
+      () => setConsultations(updated),
+      "Đã cập nhật trạng thái yêu cầu tư vấn thành công!"
+    );
   };
 
   const handleDeleteConsultation = (id: string) => {
@@ -692,8 +725,10 @@ export default function AdminPanel({
         confirmLabel: "Xác nhận hủy",
         onConfirm: () => {
           const updated = consultations.map(c => c.id === id ? { ...c, status: "cancelled" as const } : c);
-          setConsultations(updated);
-          showToast("Đã chuyển yêu cầu tư vấn vào danh sách 'Đã hủy' thành công!");
+          return persistAdminChange(
+            () => setConsultations(updated),
+            "Đã chuyển yêu cầu tư vấn vào danh sách 'Đã hủy' thành công!"
+          );
         }
       });
     } else {
@@ -704,8 +739,10 @@ export default function AdminPanel({
         confirmLabel: "Xóa vĩnh viễn",
         onConfirm: () => {
           const updated = consultations.filter(c => c.id !== id);
-          setConsultations(updated);
-          showToast("Đã xóa vĩnh viễn yêu cầu tư vấn thành công!");
+          return persistAdminChange(
+            () => setConsultations(updated),
+            "Đã xóa vĩnh viễn yêu cầu tư vấn thành công!"
+          );
         }
       });
     }
@@ -719,7 +756,7 @@ export default function AdminPanel({
       description: "Tất cả thay đổi hiện tại sẽ bị xóa khỏi dữ liệu chung và mọi khách hàng sẽ thấy dữ liệu gốc sau khi đồng bộ.",
       confirmLabel: "Đồng ý khôi phục",
       onConfirm: () => {
-        fetch("/api/reset", {
+        return fetch("/api/reset", {
           method: "POST",
           credentials: "same-origin",
         })
@@ -743,6 +780,7 @@ export default function AdminPanel({
           .catch((error) => {
             console.error("Restore default data failed:", error);
             alert(error.message || "Không thể khôi phục dữ liệu gốc. Vui lòng thử lại.");
+            return false;
           });
       }
     });
@@ -3574,19 +3612,22 @@ export default function AdminPanel({
               <button
                 type="button"
                 onClick={() => setConfirmModal(null)}
+                disabled={isSavingAdminChange}
                 className="flex-1 py-2 px-4 border border-[#c4bcae] hover:bg-[#f6f2e8] rounded-xl font-semibold text-xs text-slate-600 transition-colors cursor-pointer"
               >
                 Hủy bỏ
               </button>
               <button
                 type="button"
-                onClick={() => {
-                  confirmModal.onConfirm();
-                  setConfirmModal(null);
+                disabled={isSavingAdminChange}
+                onClick={async () => {
+                  const action = confirmModal.onConfirm;
+                  const result = await action();
+                  if (result !== false) setConfirmModal(null);
                 }}
-                className={`flex-1 py-2 px-4 ${confirmModal.confirmBg || "bg-[#8f2d24] hover:bg-[#722019]"} rounded-xl font-bold text-xs text-white transition-colors cursor-pointer shadow-md`}
+                className={`flex-1 py-2 px-4 ${confirmModal.confirmBg || "bg-[#8f2d24] hover:bg-[#722019]"} rounded-xl font-bold text-xs text-white transition-colors cursor-pointer shadow-md disabled:opacity-60 disabled:cursor-wait`}
               >
-                {confirmModal.confirmLabel || "Xác nhận"}
+                {isSavingAdminChange ? "Đang lưu..." : (confirmModal.confirmLabel || "Xác nhận")}
               </button>
             </div>
           </div>
