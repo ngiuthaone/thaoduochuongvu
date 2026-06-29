@@ -4,7 +4,6 @@ import {
   PackageSearch,
   Search,
   ShoppingCart,
-  Star,
   X,
 } from "lucide-react";
 import { Category, Product } from "../types";
@@ -34,7 +33,7 @@ function getProductBadge(product: Product) {
 }
 
 const formatVND = (num: number) => num.toLocaleString("vi-VN") + "đ";
-type SortMode = "recommended" | "price-asc" | "price-desc" | "reviews";
+type SortMode = "recommended" | "price-asc" | "price-desc";
 
 export default function ProductsPage({
   products,
@@ -71,9 +70,8 @@ export default function ProductsPage({
     return [...list].sort((a, b) => {
       if (sortMode === "price-asc") return a.price - b.price;
       if (sortMode === "price-desc") return b.price - a.price;
-      if (sortMode === "reviews") return b.reviewsCount - a.reviewsCount;
-      const aScore = (a.isBestSeller ? 100 : 0) + (a.isNew ? 20 : 0) + a.rating * 10 + a.reviewsCount;
-      const bScore = (b.isBestSeller ? 100 : 0) + (b.isNew ? 20 : 0) + b.rating * 10 + b.reviewsCount;
+      const aScore = (a.isBestSeller ? 100 : 0) + (a.isNew ? 20 : 0);
+      const bScore = (b.isBestSeller ? 100 : 0) + (b.isNew ? 20 : 0);
       return bScore - aScore;
     });
   }, [activeCategory, products, sortMode]);
@@ -235,22 +233,6 @@ export default function ProductsPage({
                       <p className="mt-1.5 text-xs text-slate-500 leading-relaxed line-clamp-2 min-h-9">
                         {product.description}
                       </p>
-                      <div className="flex items-center gap-1.5 mt-3">
-                        <div className="flex">
-                          {[...Array(5)].map((_, index) => (
-                            <Star
-                              key={index}
-                              className={`w-3.5 h-3.5 ${
-                                index < product.rating
-                                  ? "text-amber-500 fill-amber-500"
-                                  : "text-slate-200"
-                              }`}
-                            />
-                          ))}
-                        </div>
-                        <span className="text-[11px] text-slate-400">({product.reviewsCount})</span>
-                      </div>
-
                       <div className="mt-auto pt-4 flex items-center justify-between border-t border-[#f1eadf]">
                         <div>
                           {product.originalPrice && (

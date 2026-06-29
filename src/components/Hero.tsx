@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion } from "motion/react";
-import { ArrowRight, Star, Leaf, Award } from "lucide-react";
+import { ArrowRight, CheckCircle2, Leaf, Award } from "lucide-react";
 import { ContactData } from "../types";
 
 interface HeroProps {
@@ -157,15 +157,15 @@ export default function Hero({ onExploreClick, heroImage, contactData }: HeroPro
               {/* Trust markers */}
               <div className="flex flex-wrap items-center justify-center md:justify-start gap-x-6 gap-y-2 pt-2 border-t border-white/10 text-xs text-slate-300">
                 <div className="flex items-center space-x-1">
-                  <Star className="w-3.5 h-3.5 text-yellow-400 fill-yellow-400" />
+                  <CheckCircle2 className="w-3.5 h-3.5 text-[#d4af37]" />
                   <span>Cam kết chính phẩm</span>
                 </div>
                 <div className="flex items-center space-x-1">
-                  <Star className="w-3.5 h-3.5 text-yellow-400 fill-yellow-400" />
+                  <CheckCircle2 className="w-3.5 h-3.5 text-[#d4af37]" />
                   <span>Không chất bảo quản</span>
                 </div>
                 <div className="flex items-center space-x-1">
-                  <Star className="w-3.5 h-3.5 text-yellow-400 fill-yellow-400" />
+                  <CheckCircle2 className="w-3.5 h-3.5 text-[#d4af37]" />
                   <span>Giao toàn quốc</span>
                 </div>
               </div>

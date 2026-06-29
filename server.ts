@@ -51,7 +51,6 @@ const defaultContact = {
   email: "thaoduochuongvu.taybac@gmail.com",
   workingHours: "7h30 sáng - 22h00 đêm hàng ngày (kể cả Thứ 7 và Chủ nhật).",
   footerDesc: "Nguồn dược liệu hoang dã sấy hữu cơ mang nguyên vẹn dược tính thượng hạng bồi bổ thể trạng cho gia đình bạn.",
-  footerRatingText: "(4.9/5 điểm uy tín từ 1.200+ khách hàng)",
   footerCopyright: "© 2026 Thảo Dược Hương Vũ. Bản quyền thiết kế ván hàng thuộc Sapa Organic Farm.",
   commitment1Title: "CAM KẾT CHÍNH HÃNG",
   commitment1Desc: "Đền bù ngay gấp 10 lần giá trị hóa đơn nếu phát hiện hàng giả, sâm giả hay không rõ nguồn gốc.",

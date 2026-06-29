@@ -33,8 +33,8 @@ export const products: Product[] = [
     name: "Trà Atiso Túi Lọc",
     category: "tra-thao-duoc",
     price: 120000,
-    rating: 5,
-    reviewsCount: 12,
+    rating: 0,
+    reviewsCount: 0,
     image: "/src/assets/images/product_atiso_tea_1781778642518.jpg",
     description: "Trà Atiso túi lọc cao cấp được chế biến từ những đóa hoa atiso tươi ngon nhất của vùng núi cao, đem đến vị ngọt thanh khiết, hỗ trợ mát gan, thải độc và mang lại giấc ngủ an giấc.",
     benefits: [
@@ -52,8 +52,8 @@ export const products: Product[] = [
     category: "re-thao-duoc",
     price: 1500000,
     originalPrice: 1800000,
-    rating: 5,
-    reviewsCount: 8,
+    rating: 0,
+    reviewsCount: 0,
     image: "/src/assets/images/product_sam_ngoc_linh_1781778655932.jpg",
     description: "Sâm Ngọc Linh - Quốc bảo Việt Nam, được đánh giá là một trong những loài sâm tốt nhất thế giới với hàm lượng saponin vượt trội. Sâm giúp điều hòa tim mạch, bồi bổ sinh lực tuyệt đối.",
     benefits: [
@@ -72,8 +72,8 @@ export const products: Product[] = [
     category: "tra-thao-duoc",
     price: 350000,
     originalPrice: 420000,
-    rating: 5,
-    reviewsCount: 15,
+    rating: 0,
+    reviewsCount: 0,
     image: "/src/assets/images/product_saffron_1781778622356.jpg",
     description: "Nhụy hoa nghệ tây (Saffron) organic cao cấp thu hoạch thủ công tại các đỉnh núi cao Tây Tạng. Thảo dược quý giá giúp làn da tươi sáng rạng ngời, cải thiện tâm trạng và đồng hồ sinh học cơ thể.",
     benefits: [
@@ -90,8 +90,8 @@ export const products: Product[] = [
     name: "Bình Ngâm Sâm Thượng Hạng",
     category: "thao-duoc-ngam-ruou",
     price: 2500000,
-    rating: 5,
-    reviewsCount: 7,
+    rating: 0,
+    reviewsCount: 0,
     image: "/src/assets/images/category_liquor_1781778591770.jpg",
     description: "Bình rượu ngâm sâm ngọc linh và sâm đá tự nhiên trong cồn nếp sạch cao độ thượng hạng. Thiết kế bình thủy tinh sang trọng, là món quà quý giá thể hiện đẳng cấp cho gia chủ.",
     benefits: [
@@ -109,8 +109,8 @@ export const products: Product[] = [
     category: "thao-duoc-ngam-ruou",
     price: 450000,
     originalPrice: 550000,
-    rating: 5,
-    reviewsCount: 10,
+    rating: 0,
+    reviewsCount: 0,
     image: "/src/assets/images/category_roots_1781778577888.jpg",
     description: "Tổng hợp các loại thảo dược ngâm rượu bổ dưỡng nhất Tây Bắc bao gồm: sâm đá, dâm dương hoắc, ba kích tím, nhục thung dung. Giúp bổ thận tráng dương mạnh gân cốt.",
     benefits: [
@@ -127,8 +127,8 @@ export const products: Product[] = [
     name: "Nấm Linh Chi Tây Bắc",
     category: "nam-duoc-lieu",
     price: 280000,
-    rating: 5,
-    reviewsCount: 9,
+    rating: 0,
+    reviewsCount: 0,
     image: "/src/assets/images/category_mushrooms_1781778605959.jpg",
     description: "Nấm Linh Chi tự nhiên khai thác tại rừng già Tây Bắc. Sản phẩm bảo đảm sấy thô nguyên tai, giữ nguyên vẹn lớp bào tử màu nâu bổ dưỡng bên trên bề mặt nấm.",
     benefits: [
@@ -139,32 +139,5 @@ export const products: Product[] = [
     ],
     usage: "Thái lát hoặc đập nhỏ, đun sôi kỹ với nước sạch trong 15-20 phút rồi uống lúc ấm. Có thể lọc bã rồi cho chất nước bảo quản tủ lạnh uống trong ngày.",
     isNew: true,
-  },
-];
-
-export const reviews = [
-  {
-    id: "rev-1",
-    name: "Anh Hoàng Nam",
-    role: "Khách mua Sâm Ngọc Linh",
-    text: "Sâm đóng gói cực kỳ cẩn thận, củ to tươi nguyên rễ nhiều đất mùn tự nhiên. Tôi ngâm mật ong uống mỗi sáng thấy tinh thần sảng khoái hẳn ra, không còn mệt mỏi.",
-    rating: 5,
-    date: "14/06/2026",
-  },
-  {
-    id: "rev-2",
-    name: "Chị Minh Thư",
-    role: "Khách mua Nhụy Hoa Nghệ Tây",
-    text: "Màu vàng của trà saffron rất óng. Tôi bị mất ngủ kinh niên hơn 2 năm mà uống 4 ngày nay sảng khoái hẳn, ngủ một mạch đến sáng. Shop tư vấn siêu dễ thương!",
-    rating: 5,
-    date: "10/06/2026",
-  },
-  {
-    id: "rev-3",
-    name: "Chú Quang Khánh",
-    role: "Khách mua Bình sâm & Nấm Linh Chi",
-    text: "Hàng chất lượng đúng như hình chụp. Bình sâm nhìn sang trọng, nấm linh chi thơm phức mùi núi rừng tự nhiên. Rất an tâm ủng hộ đặc sản núi rừng Việt Nam.",
-    rating: 5,
-    date: "05/06/2026",
   },
 ];

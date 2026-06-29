@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { Leaf, ArrowRight, Eye, Star, ShoppingCart, Filter, Search, X } from "lucide-react";
+import { Leaf, ArrowRight, Eye, ShoppingCart, Filter, Search, X } from "lucide-react";
 import { Product, Category } from "../types";
 
 function getProductBadge(product: Product) {
@@ -271,24 +271,6 @@ export default function Products({
                         {product.description}
                       </p>
 
-                      {/* Stars Golden Rating Review count */}
-                      <div className="flex items-center space-x-1.5 mb-3">
-                        <div className="flex">
-                          {[...Array(5)].map((_, i) => (
-                            <Star
-                              key={i}
-                              className={`w-3.5 h-3.5 ${
-                                i < product.rating
-                                  ? "text-amber-500 fill-amber-500"
-                                  : "text-slate-200"
-                              }`}
-                            />
-                          ))}
-                        </div>
-                        <span className="text-slate-400 font-sans text-xs">
-                          ({product.reviewsCount} đánh giá)
-                        </span>
-                      </div>
                     </div>
 
                     {/* Pricing & Add call-to-action button */}
@@ -486,24 +468,6 @@ export default function Products({
                             <p className="font-sans text-[11px] text-slate-500 line-clamp-2 leading-relaxed mb-2.5">
                               {product.description}
                             </p>
-                            
-                            <div className="flex items-center space-x-1.5 mb-3.5">
-                              <div className="flex">
-                                {[...Array(5)].map((_, i) => (
-                                  <Star
-                                    key={i}
-                                    className={`w-3 h-3 ${
-                                      i < product.rating
-                                        ? "text-amber-500 fill-amber-500"
-                                        : "text-slate-200"
-                                    }`}
-                                  />
-                                ))}
-                              </div>
-                              <span className="text-slate-400 font-sans text-[10px]">
-                                ({product.reviewsCount} đánh giá)
-                              </span>
-                            </div>
                           </div>
 
                           <div className="flex items-center justify-between pt-2 border-t border-[#f2edf0]/40">

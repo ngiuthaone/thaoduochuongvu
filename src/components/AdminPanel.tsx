@@ -128,7 +128,6 @@ export default function AdminPanel({
   const [contactEmail, setContactEmail] = useState(contactData?.email || "");
   const [contactWorkingHours, setContactWorkingHours] = useState(contactData?.workingHours || "");
   const [footerDesc, setFooterDesc] = useState(contactData?.footerDesc || "");
-  const [footerRatingText, setFooterRatingText] = useState(contactData?.footerRatingText || "");
   const [footerCopyright, setFooterCopyright] = useState(contactData?.footerCopyright || "");
   const [commitment1Title, setCommitment1Title] = useState(contactData?.commitment1Title || "");
   const [commitment1Desc, setCommitment1Desc] = useState(contactData?.commitment1Desc || "");
@@ -184,7 +183,6 @@ export default function AdminPanel({
       setContactEmail(contactData.email);
       setContactWorkingHours(contactData.workingHours);
       setFooterDesc(contactData.footerDesc || "");
-      setFooterRatingText(contactData.footerRatingText || "");
       setFooterCopyright(contactData.footerCopyright || "");
       setCommitment1Title(contactData.commitment1Title || "");
       setCommitment1Desc(contactData.commitment1Desc || "");
@@ -460,8 +458,8 @@ export default function AdminPanel({
     const finalImages = formImages.filter(Boolean);
     const primaryImage = finalImages[0] || formImage;
 
-    if (!formName.trim() || formPrice <= 0 || !primaryImage) {
-      alert("Vui lòng điền đầy đủ tiêu đề, giá bán lớn hơn 0 và chọn ít nhất một hình ảnh!");
+    if (!formName.trim() || formPrice < 0 || !primaryImage) {
+      alert("Vui lòng điền đầy đủ tiêu đề, giá bán từ 0 trở lên và chọn ít nhất một hình ảnh!");
       return;
     }
 
@@ -471,8 +469,8 @@ export default function AdminPanel({
       category: formCategory,
       price: Number(formPrice),
       originalPrice: formOriginalPrice ? Number(formOriginalPrice) : undefined,
-      rating: editingProduct ? editingProduct.rating : 5,
-      reviewsCount: editingProduct ? editingProduct.reviewsCount : 1,
+      rating: 0,
+      reviewsCount: 0,
       image: primaryImage,
       images: finalImages.length > 0 ? finalImages : [primaryImage],
       description: formDescription.trim(),
@@ -645,7 +643,6 @@ export default function AdminPanel({
       email: contactEmail.trim(),
       workingHours: contactWorkingHours.trim(),
       footerDesc: footerDesc.trim(),
-      footerRatingText: footerRatingText.trim(),
       footerCopyright: footerCopyright.trim(),
       commitment1Title: commitment1Title.trim(),
       commitment1Desc: commitment1Desc.trim(),
@@ -3189,7 +3186,7 @@ export default function AdminPanel({
                     <div>
                       <h4 className="font-serif text-base font-bold text-[#153020]">CẤU HÌNH CHÂN TRANG (FOOTER & CAM KẾT)</h4>
                       <p className="text-[11px] text-slate-500 font-sans font-light mt-1">
-                        Tùy chỉnh nội dung mô tả ở chân trang, ngôi sao đánh giá uy tín, dòng bản quyền và nội dung của 3 cam kết ở đầu Footer.
+                        Tùy chỉnh nội dung mô tả ở chân trang, dòng bản quyền và nội dung của 3 cam kết ở đầu Footer.
                       </p>
                     </div>
 
@@ -3209,34 +3206,18 @@ export default function AdminPanel({
                         />
                       </div>
 
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                        <div>
-                          <label className="block font-bold text-slate-700 uppercase mb-1.5 font-sans text-xs">
-                            Dòng đánh giá uy tín (Rating Text)
-                          </label>
-                          <input
-                            type="text"
-                            required
-                            placeholder="Ví dụ: (4.9/5 điểm uy tín từ 1.200+ khách hàng)"
-                            value={footerRatingText}
-                            onChange={(e) => setFooterRatingText(e.target.value)}
-                            className="w-full bg-[#faf8f4] border border-[#c4bcae] rounded-lg px-3.5 py-2.5 focus:outline-none focus:ring-1 focus:ring-[#153020] text-sm"
-                          />
-                        </div>
-
-                        <div>
-                          <label className="block font-bold text-slate-700 uppercase mb-1.5 font-sans text-xs">
-                            Bản quyền chân trang (Copyright Text)
-                          </label>
-                          <input
-                            type="text"
-                            required
-                            placeholder="Ví dụ: © 2026 Thảo Dược Hương Vũ. Bản quyền thiết kế ván hàng thuộc Sapa Organic Farm."
-                            value={footerCopyright}
-                            onChange={(e) => setFooterCopyright(e.target.value)}
-                            className="w-full bg-[#faf8f4] border border-[#c4bcae] rounded-lg px-3.5 py-2.5 focus:outline-none focus:ring-1 focus:ring-[#153020] text-sm"
-                          />
-                        </div>
+                      <div>
+                        <label className="block font-bold text-slate-700 uppercase mb-1.5 font-sans text-xs">
+                          Bản quyền chân trang (Copyright Text)
+                        </label>
+                        <input
+                          type="text"
+                          required
+                          placeholder="Ví dụ: © 2026 Thảo Dược Hương Vũ. Bản quyền thiết kế vận hành bởi đội ngũ Hương Vũ."
+                          value={footerCopyright}
+                          onChange={(e) => setFooterCopyright(e.target.value)}
+                          className="w-full bg-[#faf8f4] border border-[#c4bcae] rounded-lg px-3.5 py-2.5 focus:outline-none focus:ring-1 focus:ring-[#153020] text-sm"
+                        />
                       </div>
 
                       {/* Three commitments inputs */}

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { X, Star, CheckCircle, ShoppingBag, Info, AlertTriangle } from "lucide-react";
+import { X, CheckCircle, ShoppingBag, Info, AlertTriangle } from "lucide-react";
 import { Product } from "../types";
 
 interface ProductDetailModalProps {
@@ -71,10 +71,10 @@ export default function ProductDetailModal({
         )}
 
         <div className="p-6 sm:p-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 items-start">
             
-            {/* Left Column: Image & Health Benefits Checklist */}
-            <div className="space-y-6">
+            {/* Product image gallery */}
+            <div className="space-y-3 md:col-start-1 md:row-start-1">
               <div className="space-y-3">
                 <div className="aspect-4/3 w-full bg-[#f4ece0] rounded-xl overflow-hidden shadow border border-[#dfd4c0] relative group">
                   <img
@@ -131,26 +131,10 @@ export default function ProductDetailModal({
                   </div>
                 )}
               </div>
-
-              {/* Health Benefits checklist box */}
-              <div className="bg-gradient-to-br from-[#153020]/5 to-[#153020]/10 border border-[#e6dfd3] rounded-xl p-5">
-                <h4 className="font-serif text-sm font-bold text-[#153020] tracking-wider uppercase mb-3 flex items-center space-x-2">
-                  <CheckCircle className="w-4 h-4 text-[#8f2d24]" />
-                  <span>CÔNG DỤNG CHO SỨC KHỎE</span>
-                </h4>
-                <ul className="space-y-2.5">
-                  {product.benefits.map((benefit, idx) => (
-                    <li key={idx} className="flex items-start space-x-2.5 text-xs text-[#2c3d31]">
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#8f2d24] mt-1.5 flex-shrink-0" />
-                      <span className="font-sans leading-relaxed">{benefit}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
             </div>
 
             {/* Right Column: Detailed Product Information */}
-            <div className="flex flex-col h-full justify-between space-y-6">
+            <div className="flex flex-col h-full justify-between space-y-6 md:col-start-2 md:row-start-1 md:row-span-2">
               <div>
                 {/* Product Name & Badge */}
                 <div className="flex items-center space-x-2.5 mb-2">
@@ -165,25 +149,6 @@ export default function ProductDetailModal({
                 <h3 className="font-serif text-2xl sm:text-3xl font-bold text-[#153020] leading-tight mb-2.5">
                   {product.name}
                 </h3>
-
-                {/* Rating component */}
-                <div className="flex items-center space-x-2 mb-4">
-                  <div className="flex">
-                    {[...Array(5)].map((_, i) => (
-                      <Star
-                        key={i}
-                        className={`w-4 h-4 ${
-                          i < product.rating
-                            ? "text-amber-500 fill-amber-500"
-                            : "text-slate-200"
-                        }`}
-                      />
-                    ))}
-                  </div>
-                  <span className="font-sans text-xs text-slate-500">
-                    ({product.reviewsCount} bình luận thực tế từ khách hàng)
-                  </span>
-                </div>
 
                 {/* Product Prices */}
                 <div className="flex items-baseline space-x-4 mb-4">
@@ -254,6 +219,22 @@ export default function ProductDetailModal({
                 </div>
               </div>
 
+            </div>
+
+            {/* Health Benefits checklist box */}
+            <div className="bg-gradient-to-br from-[#153020]/5 to-[#153020]/10 border border-[#e6dfd3] rounded-xl p-5 md:col-start-1 md:row-start-2">
+              <h4 className="font-serif text-sm font-bold text-[#153020] tracking-wider uppercase mb-3 flex items-center space-x-2">
+                <CheckCircle className="w-4 h-4 text-[#8f2d24]" />
+                <span>CÔNG DỤNG CHO SỨC KHỎE</span>
+              </h4>
+              <ul className="space-y-2.5">
+                {product.benefits.map((benefit, idx) => (
+                  <li key={idx} className="flex items-start space-x-2.5 text-xs text-[#2c3d31]">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#8f2d24] mt-1.5 flex-shrink-0" />
+                    <span className="font-sans leading-relaxed">{benefit}</span>
+                  </li>
+                ))}
+              </ul>
             </div>
 
           </div>
