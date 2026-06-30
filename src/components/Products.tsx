@@ -91,8 +91,8 @@ export default function Products({
   // Only show landing page approved items (where showOnLanding is not explicitly set to false)
   const landingProducts = categoryProducts.filter((p) => p.showOnLanding !== false);
 
-  // Home display list is limited to exactly 6 items max so it doesn't waste space
-  const visibleProducts = landingProducts.slice(0, 6);
+  // Home display list follows the admin selection exactly.
+  const visibleProducts = landingProducts;
 
   // All products for the Interactive Modal Catalog
   const modalFilteredProducts = products.filter((p) => {
@@ -300,7 +300,7 @@ export default function Products({
             </div>
 
             {/* Xem thêm button to open the beautiful Full interactive Catalog Modal */}
-            {products.length > 0 && (
+            {products.length > visibleProducts.length && (
               <div className="flex justify-center mt-12">
                 <button
                   type="button"

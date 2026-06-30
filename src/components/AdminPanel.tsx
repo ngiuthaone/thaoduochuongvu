@@ -1933,7 +1933,7 @@ export default function AdminPanel({
                             className="w-4 h-4 text-[#153020] border-[#c4bcae] rounded focus:ring-[#153020] cursor-pointer"
                           />
                           <label htmlFor="formShowOnLanding" className="font-bold text-[#153020] text-xs cursor-pointer select-none uppercase tracking-wider">
-                            Hiển thị trong 6 sản phẩm bày bán ở Trang chủ
+                            Hiển thị sản phẩm này ở trang chủ
                           </label>
                         </div>
 
