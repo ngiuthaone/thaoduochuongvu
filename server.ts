@@ -3,9 +3,8 @@ import path from "path";
 import fs from "fs";
 import { createHash, randomBytes, timingSafeEqual } from "crypto";
 import "dotenv/config";
-import { createServer as createViteServer } from "vite";
 import { createClient } from "@supabase/supabase-js";
-import { products as initialProducts, categories as initialCategories } from "./src/data";
+import { products as initialProducts, categories as initialCategories } from "./src/data.js";
 
 const DB_FILE = path.join(process.cwd(), "db.json");
 const SITE_STATE_ID = "main";
@@ -418,7 +417,7 @@ function createAdminSession() {
   return { token, expiresAt };
 }
 
-function getAdminSession(req: express.Request) {
+function getAdminSession(req: any) {
   const cookies = parseCookies(req.headers.cookie);
   const token = cookies[ADMIN_SESSION_COOKIE];
   if (!token) return null;
@@ -432,7 +431,7 @@ function getAdminSession(req: express.Request) {
   return { token, expiresAt };
 }
 
-function setAdminCookie(res: express.Response, token: string, expiresAt: number) {
+function setAdminCookie(res: any, token: string, expiresAt: number) {
   const cookieParts = [
     `${ADMIN_SESSION_COOKIE}=${encodeURIComponent(token)}`,
     "Path=/",
@@ -448,11 +447,11 @@ function setAdminCookie(res: express.Response, token: string, expiresAt: number)
   res.setHeader("Set-Cookie", cookieParts.join("; "));
 }
 
-function clearAdminCookie(res: express.Response) {
+function clearAdminCookie(res: any) {
   res.setHeader("Set-Cookie", `${ADMIN_SESSION_COOKIE}=; Path=/; HttpOnly; SameSite=Strict; Max-Age=0`);
 }
 
-function requireAdmin(req: express.Request, res: express.Response, next: express.NextFunction) {
+function requireAdmin(req: any, res: any, next: any) {
   if (!getAdminSession(req)) {
     res.status(401).json({ success: false, error: "Admin session required" });
     return;
@@ -525,15 +524,18 @@ async function notifyTelegramNewConsultation(consultation: any) {
   await sendTelegramMessage(text);
 }
 
-function sendAdminSaveError(res: express.Response, error: unknown, fallback: string) {
+function sendAdminSaveError(res: any, error: unknown, fallback: string) {
   console.error(fallback, error);
   const message = error instanceof Error ? error.message : fallback;
   res.status(500).json({ success: false, error: message || fallback });
 }
 
-async function startServer() {
+type CreateAppOptions = {
+  serveClient?: boolean;
+};
+
+export async function createApp(options: CreateAppOptions = {}) {
   const app = express();
-  const PORT = Number(process.env.PORT || 3000);
 
   // Let's set request limits larger, as images are uploaded in base64 format.
   app.use(express.json({ limit: "60mb" }));
@@ -900,24 +902,36 @@ async function startServer() {
     }
   });
 
-  // Vite middle-layer integration
-  if (process.env.NODE_ENV !== "production") {
-    const vite = await createViteServer({
-      server: { middlewareMode: true },
-      appType: "spa",
-    });
-    app.use(vite.middlewares);
-  } else {
-    const distPath = path.join(process.cwd(), "dist");
-    app.use(express.static(distPath));
-    app.get("*", (req, res) => {
-      res.sendFile(path.join(distPath, "index.html"));
-    });
+  if (options.serveClient !== false) {
+    // Vite middle-layer integration
+    if (process.env.NODE_ENV !== "production") {
+      const { createServer: createViteServer } = await import("vite");
+      const vite = await createViteServer({
+        server: { middlewareMode: true },
+        appType: "spa",
+      });
+      app.use(vite.middlewares);
+    } else {
+      const distPath = path.join(process.cwd(), "dist");
+      app.use(express.static(distPath));
+      app.get("*", (req, res) => {
+        res.sendFile(path.join(distPath, "index.html"));
+      });
+    }
   }
+
+  return app;
+}
+
+export async function startServer() {
+  const app = await createApp();
+  const PORT = Number(process.env.PORT || 3000);
 
   app.listen(PORT, "0.0.0.0", () => {
     console.log(`Server running on http://localhost:${PORT}`);
   });
 }
 
-startServer();
+if (process.env.VERCEL !== "1") {
+  startServer();
+}
