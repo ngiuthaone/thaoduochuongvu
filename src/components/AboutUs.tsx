@@ -76,8 +76,8 @@ export default function AboutUs({ heroImage, data }: AboutUsProps) {
                   <ShieldCheck className="w-5 h-5" />
                 </div>
                 <div>
-                  <h4 className="font-sans text-xs font-extrabold text-[#153020] uppercase tracking-wide">Tuyệt đối Cam Kết</h4>
-                  <p className="text-[11px] text-slate-500 mt-0.5 leading-relaxed">Đến bù gấp 10 lần giá trị hóa đơn nếu phát hiện hàng giả, sâm giả hay tẩm hóa chất bảo quản.</p>
+                  <h4 className="font-sans text-xs font-extrabold text-[#153020] uppercase tracking-wide">Cam Kết Nguồn Gốc</h4>
+                  <p className="text-[11px] text-slate-500 mt-0.5 leading-relaxed">Sản phẩm được lựa chọn kỹ lưỡng, nguồn gốc rõ ràng và minh bạch ở từng khâu sơ chế, bảo quản trước khi đến tay khách hàng.</p>
                 </div>
               </div>
 
@@ -86,8 +86,8 @@ export default function AboutUs({ heroImage, data }: AboutUsProps) {
                   <Gem className="w-5 h-5" />
                 </div>
                 <div>
-                  <h4 className="font-sans text-xs font-extrabold text-[#153020] uppercase tracking-wide">Giá trị quý hiếm</h4>
-                  <p className="text-[11px] text-slate-500 mt-0.5 leading-relaxed">Mỗi một tai nấm hay củ sâm được kiểm định nghiêm ngặt đủ tuổi sinh trưởng mới khai thác.</p>
+                  <h4 className="font-sans text-xs font-extrabold text-[#153020] uppercase tracking-wide">Chọn Lọc Kỹ Càng</h4>
+                  <p className="text-[11px] text-slate-500 mt-0.5 leading-relaxed">Nguyên liệu được thu hái đúng mùa và chọn lọc cẩn thận để giữ được đặc tính tự nhiên vốn có của từng loại thảo dược.</p>
                 </div>
               </div>
             </div>

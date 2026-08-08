@@ -135,10 +135,10 @@ export default function App() {
 
   const defaultContact: ContactData = {
     companyName: "THẢO DƯỢC HƯƠNG VŨ",
-    tagline: "Tổng Kho Thảo Dược Đông Y Tây Bắc",
-    address: "Bản Cát Cát, Thị xã Sa Pa, Tỉnh Lào Cai, Việt Nam.",
+    tagline: "Thảo Dược Đông Y Tây Bắc",
+    address: "037, Ngọc Uyển, Xã Bắc Hà, Tỉnh Lào Cai, Việt Nam.",
     phone: "(+84)569315315",
-    email: "thaoduochuongvu.taybac@gmail.com",
+    email: "huongvu2306@gmail.com",
     workingHours: "7h30 sáng - 22h00 đêm hàng ngày (kể cả Thứ 7 và Chủ nhật).",
     footerDesc: "Nguồn dược liệu hoang dã sấy hữu cơ mang nguyên vẹn dược tính thượng hạng bồi bổ thể trạng cho gia đình bạn.",
     footerCopyright: "© 2026 Thảo Dược Hương Vũ. Bản quyền thiết kế ván hàng thuộc Sapa Organic Farm.",

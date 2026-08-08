@@ -72,7 +72,7 @@ export default function Contact({ contactData, onAddConsultation }: ContactProps
                     <MapPin className="w-5 h-5" />
                   </div>
                   <div>
-                    <h4 className="font-sans font-bold text-xs text-white uppercase tracking-wider">Trụ sở khai thác</h4>
+                    <h4 className="font-sans font-bold text-xs text-white uppercase tracking-wider">Địa chỉ</h4>
                     <p className="text-xs text-slate-300 mt-1 leading-relaxed">{contactData.address}</p>
                   </div>
                 </div>
@@ -84,7 +84,7 @@ export default function Contact({ contactData, onAddConsultation }: ContactProps
                   <div>
                     <h4 className="font-sans font-bold text-xs text-white uppercase tracking-wider">Hotline Tư Vấn Thảo Dược</h4>
                     <p className="text-sm font-bold text-yellow-300 mt-0.5">{contactData.phone}</p>
-                    <p className="text-[10px] text-slate-400">Ấn để gọi - Miễn phí 100% cuộc gọi tư vấn kê toa</p>
+                    <p className="text-[10px] text-slate-400">Ấn để gọi</p>
                   </div>
                 </div>
 
