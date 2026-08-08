@@ -1,4 +1,4 @@
-import { ShieldCheck, Gem, Leaf, Tag, Handshake, BookOpen } from "lucide-react";
+import { ShieldCheck, Gem, Tag, Handshake } from "lucide-react";
 import { AboutUsData } from "../types";
 
 interface AboutUsProps {
@@ -94,21 +94,21 @@ export default function AboutUs({ heroImage, data }: AboutUsProps) {
           </div>
         </div>
 
-        {/* 5 Core Commitment boxes */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {/* 3 Core Commitment boxes */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="bg-[#f0f3f1] border border-[#d2dcd5] rounded-xl p-6 hover:shadow-md transition-shadow">
             <ShieldCheck className="w-8 h-8 text-[#8f2d24] mb-3.5" />
-            <h4 className="font-serif text-sm font-bold text-[#153020] uppercase tracking-wider mb-2">Cam Kết Về Nguồn Gốc</h4>
+            <h4 className="font-serif text-sm font-bold text-[#153020] uppercase tracking-wider mb-2">Cam Kết Về Nguồn Gốc & Giá Trị Tự Nhiên</h4>
             <p className="text-xs text-slate-500 leading-relaxed font-sans">
-              Hương Vũ chú trọng lựa chọn thảo dược có nguồn gốc rõ ràng, đúng chủng loại và hạn chế tối đa các sản phẩm qua xử lý không cần thiết. Chúng tôi mong muốn mỗi sản phẩm đến tay khách hàng đều đúng với những gì được giới thiệu.
+              Hương Vũ chú trọng lựa chọn thảo dược có nguồn gốc rõ ràng, đúng chủng loại và hạn chế tối đa qua xử lý không cần thiết. Mỗi loại thảo dược có thời gian sinh trưởng và mùa thu hái riêng, vì thế chúng tôi luôn ưu tiên nguyên liệu đạt độ trưởng thành phù hợp, chú trọng sơ chế và bảo quản để giữ trọn đặc tính tự nhiên.
             </p>
           </div>
 
           <div className="bg-[#f0f3f1] border border-[#d2dcd5] rounded-xl p-6 hover:shadow-md transition-shadow">
-            <Leaf className="w-8 h-8 text-[#8f2d24] mb-3.5" />
-            <h4 className="font-serif text-sm font-bold text-[#153020] uppercase tracking-wider mb-2">Trân Trọng Giá Trị Tự Nhiên</h4>
+            <Handshake className="w-8 h-8 text-[#8f2d24] mb-3.5" />
+            <h4 className="font-serif text-sm font-bold text-[#153020] uppercase tracking-wider mb-2">Đồng Hành Cùng Người Dân Bản Địa</h4>
             <p className="text-xs text-slate-500 leading-relaxed font-sans">
-              Mỗi loại thảo dược có thời gian sinh trưởng và mùa thu hái riêng. Hương Vũ ưu tiên lựa chọn nguyên liệu đạt độ trưởng thành phù hợp, đồng thời chú trọng khâu sơ chế và bảo quản để giữ được những đặc tính tự nhiên vốn có.
+              Một phần nguyên liệu được thu mua trực tiếp từ người dân và các hộ sản xuất tại Bắc Hà cùng khu vực Tây Bắc, tạo thêm đầu ra cho nông sản địa phương. Hương Vũ trân trọng những kinh nghiệm sử dụng cây cỏ truyền lại qua nhiều thế hệ, ghi chép và chọn lọc để gìn giữ giá trị truyền thống của sản vật quê hương.
             </p>
           </div>
 
@@ -117,22 +117,6 @@ export default function AboutUs({ heroImage, data }: AboutUsProps) {
             <h4 className="font-serif text-sm font-bold text-[#153020] uppercase tracking-wider mb-2">Giá Hợp Lý, Làm Ăn Lâu Dài</h4>
             <p className="text-xs text-slate-500 leading-relaxed font-sans">
               Thay vì đầu tư quá nhiều vào hình thức quảng cáo, Hương Vũ tập trung vào chất lượng nguyên liệu và duy trì mức giá hợp lý để khách hàng có thể sử dụng sản phẩm lâu dài.
-            </p>
-          </div>
-
-          <div className="bg-[#f0f3f1] border border-[#d2dcd5] rounded-xl p-6 hover:shadow-md transition-shadow">
-            <Handshake className="w-8 h-8 text-[#8f2d24] mb-3.5" />
-            <h4 className="font-serif text-sm font-bold text-[#153020] uppercase tracking-wider mb-2">Đồng Hành Cùng Người Dân Địa Phương</h4>
-            <p className="text-xs text-slate-500 leading-relaxed font-sans">
-              Một phần nguyên liệu của Hương Vũ được thu mua từ người dân và các hộ sản xuất tại Bắc Hà cùng khu vực Tây Bắc. Việc hợp tác trực tiếp giúp tạo thêm đầu ra cho nông sản địa phương và giữ lại giá trị của những sản vật quê hương.
-            </p>
-          </div>
-
-          <div className="bg-[#f0f3f1] border border-[#d2dcd5] rounded-xl p-6 hover:shadow-md transition-shadow">
-            <BookOpen className="w-8 h-8 text-[#8f2d24] mb-3.5" />
-            <h4 className="font-serif text-sm font-bold text-[#153020] uppercase tracking-wider mb-2">Gìn Giữ Kinh Nghiệm Thảo Dược Bản Địa</h4>
-            <p className="text-xs text-slate-500 leading-relaxed font-sans">
-              Hương Vũ trân trọng những kinh nghiệm sử dụng cây cỏ được truyền lại trong đời sống của người dân vùng cao. Chúng tôi tìm hiểu, ghi chép và chọn lọc những kiến thức phù hợp để gìn giữ giá trị truyền thống, đồng thời luôn tiếp cận thận trọng với các kiến thức hiện đại về thảo dược.
             </p>
           </div>
         </div>
