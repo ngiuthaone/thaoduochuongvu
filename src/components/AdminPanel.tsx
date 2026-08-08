@@ -120,6 +120,7 @@ export default function AdminPanel({
   const [aboutQuote, setAboutQuote] = useState(aboutUsData.quote);
   const [aboutParagraph1, setAboutParagraph1] = useState(aboutUsData.paragraph1);
   const [aboutParagraph2, setAboutParagraph2] = useState(aboutUsData.paragraph2);
+  const [aboutParagraph3, setAboutParagraph3] = useState(aboutUsData.paragraph3);
   const [aboutStatNumber, setAboutStatNumber] = useState(aboutUsData.statNumber);
   const [aboutStatLabel, setAboutStatLabel] = useState(aboutUsData.statLabel);
 
@@ -172,6 +173,7 @@ export default function AdminPanel({
     setAboutQuote(aboutUsData.quote);
     setAboutParagraph1(aboutUsData.paragraph1);
     setAboutParagraph2(aboutUsData.paragraph2);
+    setAboutParagraph3(aboutUsData.paragraph3);
     setAboutStatNumber(aboutUsData.statNumber);
     setAboutStatLabel(aboutUsData.statLabel);
   }, [aboutUsData]);
@@ -696,6 +698,7 @@ export default function AdminPanel({
       quote: aboutQuote.trim(),
       paragraph1: aboutParagraph1.trim(),
       paragraph2: aboutParagraph2.trim(),
+      paragraph3: aboutParagraph3.trim(),
       statNumber: aboutStatNumber.trim(),
       statLabel: aboutStatLabel.trim(),
     };
@@ -2545,6 +2548,18 @@ export default function AdminPanel({
                         rows={3}
                         value={aboutParagraph2}
                         onChange={(e) => setAboutParagraph2(e.target.value)}
+                        className="w-full bg-white border border-[#c4bcae] rounded-lg px-3 py-2.5 focus:outline-none focus:ring-1 focus:ring-[#153020] leading-relaxed"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block font-semibold text-slate-700 tracking-wide uppercase mb-1">
+                        Đoạn văn câu chuyện kể 3
+                      </label>
+                      <textarea
+                        rows={3}
+                        value={aboutParagraph3}
+                        onChange={(e) => setAboutParagraph3(e.target.value)}
                         className="w-full bg-white border border-[#c4bcae] rounded-lg px-3 py-2.5 focus:outline-none focus:ring-1 focus:ring-[#153020] leading-relaxed"
                       />
                     </div>

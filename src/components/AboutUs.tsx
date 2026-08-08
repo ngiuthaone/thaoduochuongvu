@@ -59,11 +59,15 @@ export default function AboutUs({ heroImage, data }: AboutUsProps) {
             </h3>
             
             <p className="font-sans text-xs sm:text-sm text-slate-600 leading-relaxed font-light whitespace-pre-line">
-              {data.paragraph1 || "Khởi đầu từ những chuyến đi rừng dài ngày của dòng họ Vũ tìm kiếm các phương thuốc trân quý của người Dao đỏ, người H'mông bản địa vùng núi Sapa, Hà Giang. Thảo Dược Hương Vũ đã nâng tầm chế biến thủ công giữ trọn vẹn lớp dược lý cao nhất mà không lạm dụng bất kỳ hóa chất diệt cỏ hay sấy lưu huỳnh công nghiệp độc hại nào."}
+              {data.paragraph1 || "Thảo Dược Hương Vũ bắt đầu từ niềm yêu quý những sản vật tự nhiên của vùng núi Bắc Hà, Lào Cai và kinh nghiệm tìm hiểu, lựa chọn các loại thảo dược được người dân địa phương sử dụng qua nhiều thế hệ."}
+            </p>
+
+<p className="font-sans text-xs sm:text-sm text-slate-600 leading-relaxed font-light whitespace-pre-line">
+              {data.paragraph2 || "Chúng tôi tập trung vào những sản phẩm thảo dược có nguồn gốc rõ ràng, được lựa chọn kỹ từ khâu nguyên liệu, làm sạch đến sơ chế và bảo quản. Với nhiều sản phẩm, Hương Vũ vẫn ưu tiên phương pháp chế biến thủ công nhằm giữ được đặc tính tự nhiên, màu sắc và hương thơm vốn có của nguyên liệu."}
             </p>
 
             <p className="font-sans text-xs sm:text-sm text-slate-600 leading-relaxed font-light whitespace-pre-line">
-              {data.paragraph2 || "Sản phẩm của Hương Vũ đạt kiểm định an toàn vệ sinh thực phẩm khắt khe và được các chuyên khoa Đông y viện Trung Ương tin dùng kê đơn nâng cao thể trạng."}
+              {data.paragraph3 || "Không chạy theo những lời quảng cáo phóng đại, Hương Vũ mong muốn khách hàng nhớ đến mình bằng sự chân thành, chất lượng ổn định và cách làm ăn lâu dài. Mỗi sản phẩm gửi đi đều là sự trân trọng dành cho thảo dược quê hương Bắc Hà và cho sự tin tưởng của từng khách hàng."}
             </p>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-[#dfd4c0]/60">

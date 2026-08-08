@@ -48,6 +48,7 @@ export interface AboutUsData {
   quote: string;
   paragraph1: string;
   paragraph2: string;
+  paragraph3: string;
   statNumber: string;
   statLabel: string;
 }
