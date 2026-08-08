@@ -14,7 +14,7 @@ export default function Hero({ onExploreClick, heroImage, contactData }: HeroPro
   const bannerSubtitle = contactData.bannerSubtitle || "Thảo Dược Đông Y Tây Bắc";
   const bannerTitle = contactData.bannerTitle || "HƯƠNG VŨ";
   const bannerTagline = contactData.bannerTagline || "TINH TÚY NÚI RỰNG TÂY BẮC";
-  const bannerDesc = contactData.bannerDesc || "Chuyên cung cấp sỉ lẻ thảo dược chất lượng cao - Đồ uống ngâm bổ Đông Y Tây Bắc thượng hạng. Được thu hái thủ công 100% tự nhiên bảo đảm vệ sinh - Uy tín đặt lên hàng đầu.";
+  const bannerDesc = contactData.bannerDesc || "Chuyên cung cấp sỉ lẻ thảo dược, nông sản Tây Bắc và đồ gỗ mỹ nghệ tuyển chọn. Sản phẩm được lựa chọn kỹ, ưu tiên nguồn gốc rõ ràng, chất lượng tốt và giá trị sử dụng lâu dài.";
 
   // Safe parse for multiple images in hero slider
   const images = (() => {
