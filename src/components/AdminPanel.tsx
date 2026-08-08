@@ -288,37 +288,77 @@ export default function AdminPanel({
     return new Date(); // fallback
   };
 
-  // Trigger File Upload for product image
-  const handleProductImageUpload = (e: ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (files && files.length > 0) {
-      const promises = Array.from(files).map((file: File) => {
+  // Upload a file straight from the browser to Supabase Storage, bypassing the
+  // Vercel function body limit. Falls back to base64 data URL when storage is off.
+  const uploadFileToStorage = async (file: File, folder: string): Promise<string> => {
+    try {
+      const res = await fetch("/api/admin/upload_url", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "same-origin",
+        body: JSON.stringify({ folder, filename: file.name, contentType: file.type || "image/jpeg" }),
+      });
+      if (res.status === 401) throw new Error("Phiên quản trị đã hết hạn. Vui lòng đăng nhập lại.");
+      if (res.status === 503) throw new Error("STORAGE_DISABLED");
+
+      const body = await res.json().catch(() => null);
+      if (!res.ok || !body?.url) {
+        throw new Error(body?.error || `Không lấy được URL tải lên (HTTP ${res.status}).`);
+      }
+
+      const uploadRes = await fetch(body.url, {
+        method: "PUT",
+        headers: {
+          "Content-Type": file.type || "image/jpeg",
+          "cache-control": "max-age=31536000",
+          "x-upsert": "false",
+        },
+        body: file,
+      });
+      if (!uploadRes.ok) throw new Error(`Tải ảnh lên thất bại (HTTP ${uploadRes.status}).`);
+      return body.publicUrl;
+    } catch (err) {
+      if (err instanceof Error && err.message === "STORAGE_DISABLED") {
         return new Promise<string>((resolve) => {
           const reader = new FileReader();
-          reader.onloadend = () => {
-            if (typeof reader.result === "string") {
-              resolve(reader.result);
-            } else {
-              resolve("");
-            }
-          };
+          reader.onloadend = () => resolve(typeof reader.result === "string" ? reader.result : "");
           reader.readAsDataURL(file);
         });
-      });
+      }
+      throw err;
+    }
+  };
 
-      Promise.all(promises).then((results) => {
-        const validResults = results.filter(Boolean);
-        if (validResults.length > 0) {
-          setFormImages((prev) => {
-            const updated = [...prev, ...validResults];
-            if (!formImage && updated.length > 0) {
-              setFormImage(updated[0]);
-            }
-            return updated;
-          });
-          showToast(`Đã tải lên thành công ${validResults.length} hình ảnh mới!`);
+  // Trigger File Upload for product image
+  const handleProductImageUpload = async (e: ChangeEvent<HTMLInputElement>) => {
+    const input = e.target;
+    const files = input.files;
+    if (files && files.length > 0) {
+      input.value = "";
+      const results: string[] = [];
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        if (!file) continue;
+        try {
+          const url = await uploadFileToStorage(file, "products");
+          if (url) results.push(url);
+        } catch (err) {
+          console.error("Upload ảnh sản phẩm thất bại:", err);
+          alert(err instanceof Error ? err.message : "Không thể tải lên ảnh sản phẩm.");
+          return;
         }
-      });
+      }
+
+      if (results.length > 0) {
+        setFormImages((prev) => {
+          const updated = [...prev, ...results];
+          if (!formImage && updated.length > 0) {
+            setFormImage(updated[0]);
+          }
+          return updated;
+        });
+        showToast(`Đã tải lên thành công ${results.length} hình ảnh mới!`);
+      }
     }
   };
 
@@ -361,16 +401,18 @@ export default function AdminPanel({
   };
 
   // Trigger File Upload for Hero Image
-  const handleHeroImageUpload = (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
+  const handleHeroImageUpload = async (e: ChangeEvent<HTMLInputElement>) => {
+    const input = e.target;
+    const file = input.files?.[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        if (typeof reader.result === "string") {
-          handleAddHeroImage(reader.result);
-        }
-      };
-      reader.readAsDataURL(file);
+      input.value = "";
+      try {
+        const url = await uploadFileToStorage(file, "hero");
+        if (url) handleAddHeroImage(url);
+      } catch (err) {
+        console.error("Upload ảnh bìa thất bại:", err);
+        alert(err instanceof Error ? err.message : "Không thể tải lên ảnh bìa.");
+      }
     }
   };
 
@@ -568,16 +610,18 @@ export default function AdminPanel({
   };
 
   // Categories Form Handlers
-  const handleCatImageUpload = (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
+  const handleCatImageUpload = async (e: ChangeEvent<HTMLInputElement>) => {
+    const input = e.target;
+    const file = input.files?.[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        if (typeof reader.result === "string") {
-          setCatFormImage(reader.result);
-        }
-      };
-      reader.readAsDataURL(file);
+      input.value = "";
+      try {
+        const url = await uploadFileToStorage(file, "categories");
+        if (url) setCatFormImage(url);
+      } catch (err) {
+        console.error("Upload ảnh danh mục thất bại:", err);
+        alert(err instanceof Error ? err.message : "Không thể tải lên ảnh danh mục.");
+      }
     }
   };
 

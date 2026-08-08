@@ -733,6 +733,46 @@ export async function createApp(options: CreateAppOptions = {}) {
     res.json({ success: true, data: restored });
   });
 
+  app.post("/api/admin/upload_url", requireAdmin, async (req, res) => {
+    try {
+      if (!supabase) {
+        res.status(503).json({ success: false, error: "Supabase storage chưa được cấu hình." });
+        return;
+      }
+
+      const { folder, filename, contentType } = req.body || {};
+      const mimeType = typeof contentType === "string" && contentType.startsWith("image/")
+        ? contentType
+        : null;
+
+      if (!mimeType) {
+        res.status(400).json({ success: false, error: "Chỉ hỗ trợ tải lên file ảnh." });
+        return;
+      }
+
+      await ensureImageBucket();
+
+      const cleanFolder = String(folder || "uploads").replace(/[^\w.-]/g, "").slice(0, 40) || "uploads";
+      const cleanName = String(filename || "image").replace(/[^\w.-]/g, "").slice(0, 80) || "image";
+      const extension = getImageExtension(mimeType);
+      const objectPath = `${cleanFolder}/${Date.now()}_${randomBytes(6).toString("hex")}_${cleanName}.${extension}`;
+
+      const { data, error } = await supabase.storage
+        .from(IMAGE_BUCKET)
+        .createSignedUploadUrl(objectPath, { upsert: false });
+
+      if (error || !data?.signedUrl) {
+        sendAdminSaveError(res, error || new Error("Không tạo được URL tải lên."), "Không tạo được URL tải lên ảnh.");
+        return;
+      }
+
+      const publicUrl = supabase.storage.from(IMAGE_BUCKET).getPublicUrl(objectPath).data.publicUrl;
+      res.json({ success: true, url: data.signedUrl, publicUrl });
+    } catch (error) {
+      sendAdminSaveError(res, error, "Không tạo được URL tải lên ảnh.");
+    }
+  });
+
   app.post("/api/products", requireAdmin, async (req, res) => {
     try {
       const { products } = req.body;
