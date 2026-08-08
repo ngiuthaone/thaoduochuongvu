@@ -1,6 +1,7 @@
 import { useState, FormEvent } from "react";
 import { X, CheckCircle, PhoneCall, Calendar, Receipt, Gift, ShoppingBag, Truck } from "lucide-react";
 import { CartItem, OrderDetails } from "../types";
+import { vietnamProvinces } from "../data/vietnam";
 
 interface CheckoutModalProps {
   isOpen: boolean;
@@ -22,6 +23,8 @@ export default function CheckoutModal({
   const [fullName, setFullName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [address, setAddress] = useState("");
+  const [province, setProvince] = useState("");
+  const [district, setDistrict] = useState("");
   const [note, setNote] = useState("");
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [generatedOrderCode, setGeneratedOrderCode] = useState("");
@@ -43,6 +46,11 @@ export default function CheckoutModal({
 
     if (!fullName.trim() || !phoneNumber.trim() || !address.trim()) {
       setErrorText("Vui lòng điền đầy đủ các thông tin bắt buộc (*)");
+      return;
+    }
+
+    if (!province || !district) {
+      setErrorText("Vui lòng chọn Tỉnh/Thành phố và Quận/Huyện");
       return;
     }
 
@@ -69,7 +77,7 @@ export default function CheckoutModal({
     const newOrder: OrderDetails = {
       fullName: fullName.trim(),
       phoneNumber: phoneNumber.trim(),
-      address: address.trim(),
+      address: `${address.trim()}, ${district}, ${province}`,
       note: note.trim(),
       items: cart.map(item => ({
         productId: item.product.id,
@@ -175,11 +183,55 @@ export default function CheckoutModal({
                   <input
                     type="text"
                     required
-                    placeholder="Số nhà, ngõ ngách, tên đường, xã, huyện, tỉnh"
+                    placeholder="Số nhà, ngõ ngách, tên đường, xã, thôn"
                     value={address}
                     onChange={(e) => setAddress(e.target.value)}
                     className="w-full bg-white border border-[#c4bcae] rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-1 focus:ring-[#153020] placeholder-slate-400 font-sans"
                   />
+                </div>
+
+                {/* Province / District selects */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-semibold text-[#153020] uppercase tracking-wide mb-1.5">
+                      Tỉnh/Thành phố <span className="text-red-600">*</span>
+                    </label>
+                    <select
+                      required
+                      value={province}
+                      onChange={(e) => {
+                        setProvince(e.target.value);
+                        setDistrict("");
+                      }}
+                      className="w-full bg-white border border-[#c4bcae] rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-1 focus:ring-[#153020] text-slate-900 font-sans"
+                    >
+                      <option value="">Chọn Tỉnh/Thành phố</option>
+                      {vietnamProvinces.map((p) => (
+                        <option key={p.id} value={p.name}>{p.name}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-[#153020] uppercase tracking-wide mb-1.5">
+                      Quận/Huyện <span className="text-red-600">*</span>
+                    </label>
+                    <select
+                      required
+                      value={district}
+                      onChange={(e) => setDistrict(e.target.value)}
+                      disabled={!province}
+                      className="w-full bg-white border border-[#c4bcae] rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-1 focus:ring-[#153020] text-slate-900 font-sans disabled:bg-slate-100 disabled:text-slate-400"
+                    >
+                      <option value="">Chọn Quận/Huyện</option>
+                      {province &&
+                        vietnamProvinces
+                          .find((p) => p.name === province)
+                          ?.districts.map((d) => (
+                            <option key={d} value={d}>{d}</option>
+                          ))}
+                    </select>
+                  </div>
                 </div>
 
                 {/* Notes */}
