@@ -334,12 +334,12 @@ export default function AdminPanel({
   // Trigger File Upload for product image
   const handleProductImageUpload = async (e: ChangeEvent<HTMLInputElement>) => {
     const input = e.target;
-    const files = input.files;
-    if (files && files.length > 0) {
+    const selectedFiles = input.files ? Array.from(input.files) : [];
+    if (selectedFiles.length > 0) {
       input.value = "";
       const results: string[] = [];
-      for (let i = 0; i < files.length; i++) {
-        const file = files[i];
+      for (let i = 0; i < selectedFiles.length; i++) {
+        const file = selectedFiles[i];
         if (!file) continue;
         try {
           const url = await uploadFileToStorage(file, "products");
