@@ -1,7 +1,7 @@
 import express from "express";
 import path from "path";
 import fs from "fs";
-import { createHash, randomBytes, timingSafeEqual } from "crypto";
+import { createHash, createHmac, randomBytes, timingSafeEqual } from "crypto";
 import "dotenv/config";
 import { createClient } from "@supabase/supabase-js";
 import { products as initialProducts, categories as initialCategories } from "./src/data.js";
@@ -11,7 +11,8 @@ const SITE_STATE_ID = "main";
 const ADMIN_SESSION_COOKIE = "huongvu_admin_session";
 const ADMIN_SESSION_HOURS = Number(process.env.ADMIN_SESSION_HOURS || 8);
 const IMAGE_BUCKET = process.env.SUPABASE_IMAGE_BUCKET || "site-images";
-const adminSessions = new Map<string, number>();
+const ADMIN_SESSION_SECRET =
+  process.env.ADMIN_SESSION_SECRET || process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY || "dev-admin-session-secret";
 let imageBucketReady = false;
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SECRET_KEY;
@@ -412,9 +413,8 @@ function safeCompare(a: string, b: string) {
 }
 
 function createAdminSession() {
-  const token = randomBytes(32).toString("hex");
   const expiresAt = Date.now() + ADMIN_SESSION_HOURS * 60 * 60 * 1000;
-  adminSessions.set(token, expiresAt);
+  const token = Buffer.from(`${expiresAt}.${createHmac("sha256", ADMIN_SESSION_SECRET).update(String(expiresAt)).digest("base64url")}`).toString("base64url");
   return { token, expiresAt };
 }
 
@@ -423,13 +423,22 @@ function getAdminSession(req: any) {
   const token = cookies[ADMIN_SESSION_COOKIE];
   if (!token) return null;
 
-  const expiresAt = adminSessions.get(token);
-  if (!expiresAt || expiresAt < Date.now()) {
-    adminSessions.delete(token);
+  try {
+    const decoded = Buffer.from(token, "base64url").toString("utf8");
+    const sep = decoded.lastIndexOf(".");
+    if (sep <= 0) return null;
+    const payload = decoded.slice(0, sep);
+    const sig = decoded.slice(sep + 1);
+    const expected = createHmac("sha256", ADMIN_SESSION_SECRET).update(payload).digest("base64url");
+    if (sig.length !== expected.length || !timingSafeEqual(Buffer.from(sig), Buffer.from(expected))) {
+      return null;
+    }
+    const expiresAt = Number(payload);
+    if (!Number.isFinite(expiresAt) || expiresAt < Date.now()) return null;
+    return { token, expiresAt };
+  } catch {
     return null;
   }
-
-  return { token, expiresAt };
 }
 
 function setAdminCookie(res: any, token: string, expiresAt: number) {
@@ -667,8 +676,6 @@ export async function createApp(options: CreateAppOptions = {}) {
   });
 
   app.post("/api/admin/logout", (req, res) => {
-    const session = getAdminSession(req);
-    if (session) adminSessions.delete(session.token);
     clearAdminCookie(res);
     res.json({ success: true });
   });

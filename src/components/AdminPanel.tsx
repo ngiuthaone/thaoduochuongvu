@@ -334,7 +334,7 @@ export default function AdminPanel({
   // Trigger File Upload for product image
   const handleProductImageUpload = async (e: ChangeEvent<HTMLInputElement>) => {
     const input = e.target;
-    const selectedFiles = input.files ? Array.from(input.files) : [];
+    const selectedFiles: File[] = input.files ? Array.from(input.files) : [];
     if (selectedFiles.length > 0) {
       input.value = "";
       const results: string[] = [];
